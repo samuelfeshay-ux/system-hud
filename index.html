@@ -229,4 +229,1042 @@
                 <span class="text-cyan-300 font-bold">YOU</span>
               </div>
               <div class="flex items-center space-x-1">
-                <span class="w-
+                <span class="w-3 h-3 bg-purple-500 rounded-full inline-block"></span>
+                <span class="text-purple-300 font-bold">GHOST</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative w-full aspect-square max-h-[300px] mx-auto my-2 flex items-center justify-center">
+            <canvas id="radarChart"></canvas>
+          </div>
+
+          <div class="grid grid-cols-3 md:grid-cols-6 gap-2 pt-3 border-t border-slate-800 text-center font-orbitron text-xs">
+            <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">IQ (INT)</div>
+              <div class="font-bold text-cyan-400" id="stat-val-iq">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">STR (GYM)</div>
+              <div class="font-bold text-cyan-400" id="stat-val-str">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">DISCIPLINE</div>
+              <div class="font-bold text-cyan-400" id="stat-val-disc">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">ENDURANCE</div>
+              <div class="font-bold text-cyan-400" id="stat-val-end">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">FOCUS</div>
+              <div class="font-bold text-cyan-400" id="stat-val-foc">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">CONSISTENCY</div>
+              <div class="font-bold text-cyan-400" id="stat-val-con">0.0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal Proximity & Horizons (5 Cols) -->
+        <div class="lg:col-span-5 system-panel p-5 rounded-sm space-y-4">
+          <div>
+            <h3 class="font-orbitron font-bold text-sm text-cyan-300">🎯 GOAL PROXIMITY & HORIZON</h3>
+            <p class="text-xs text-slate-400">Distance to target objectives initialized from zero</p>
+          </div>
+
+          <div class="space-y-3 font-orbitron">
+            <div class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-1 flex justify-between">
+              <span>ACADEMIC TARGETS</span>
+              <span class="text-cyan-400 text-[10px]">A* / DISTINCTION*</span>
+            </div>
+
+            <!-- Econ -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300">A* Economics</span>
+                <span class="text-cyan-400"><span id="goal-econ-you">0.0</span> / 120 hrs</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 border border-slate-700 rounded-sm relative overflow-hidden">
+                <div id="bar-econ-you" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%;"></div>
+                <div id="bar-econ-ghost" class="h-full bg-purple-500/60 absolute top-0 left-0 transition-all duration-500" style="width: 0%; z-index: 1;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500 mt-0.5">
+                <span>Ghost: <span id="ghost-econ-pct" class="text-purple-400 font-bold">0%</span></span>
+                <span>You: <span id="you-econ-pct" class="text-cyan-400 font-bold">0%</span></span>
+              </div>
+            </div>
+
+            <!-- Soc -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300">A* Sociology</span>
+                <span class="text-cyan-400"><span id="goal-soc-you">0.0</span> / 120 hrs</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 border border-slate-700 rounded-sm relative overflow-hidden">
+                <div id="bar-soc-you" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%;"></div>
+                <div id="bar-soc-ghost" class="h-full bg-purple-500/60 absolute top-0 left-0 transition-all duration-500" style="width: 0%; z-index: 1;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500 mt-0.5">
+                <span>Ghost: <span id="ghost-soc-pct" class="text-purple-400 font-bold">0%</span></span>
+                <span>You: <span id="you-soc-pct" class="text-cyan-400 font-bold">0%</span></span>
+              </div>
+            </div>
+
+            <!-- Business -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300">Distinction* CTEC Business</span>
+                <span class="text-cyan-400"><span id="goal-biz-you">0.0</span> / 90 hrs</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 border border-slate-700 rounded-sm relative overflow-hidden">
+                <div id="bar-biz-you" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%;"></div>
+                <div id="bar-biz-ghost" class="h-full bg-purple-500/60 absolute top-0 left-0 transition-all duration-500" style="width: 0%; z-index: 1;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500 mt-0.5">
+                <span>Ghost: <span id="ghost-biz-pct" class="text-purple-400 font-bold">0%</span></span>
+                <span>You: <span id="you-biz-pct" class="text-cyan-400 font-bold">0%</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Physical Horizons -->
+          <div class="space-y-2 font-orbitron pt-2">
+            <div class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-1 flex justify-between">
+              <span>PHYSICAL MATRIX</span>
+              <span class="text-emerald-400 text-[10px]">PRELOADED</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="bg-slate-900/80 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-400">HEIGHT</div>
+                <div class="font-extrabold text-cyan-300 text-sm">5'8.5"</div>
+                <div class="text-[9px] text-emerald-400 mt-0.5">Target: 5'10"+</div>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-400">WEIGHT</div>
+                <div class="font-extrabold text-cyan-300 text-sm">58.5 KG</div>
+                <div class="text-[9px] text-emerald-400 mt-0.5">Target: 65-72 KG</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="analytics-rival-status-box" class="p-3 bg-purple-950/40 border border-purple-500/40 rounded-sm text-xs font-orbitron flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
+              <span class="text-purple-200">RIVAL: <span id="analytics-rival-status-text" class="text-purple-400 font-bold">EQUAL BASELINE</span></span>
+            </div>
+            <span class="text-[10px] text-slate-400" id="analytics-gap-hours">0.0h gap</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Weekly Activity & Consistency Row -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-7 system-panel p-4 rounded-sm">
+          <h3 class="font-orbitron font-bold text-sm text-cyan-300 mb-3">WEEKLY XP & REVISION ACTIVITY</h3>
+          <div class="h-44 w-full">
+            <canvas id="weeklyActivityChart"></canvas>
+          </div>
+        </div>
+
+        <div class="md:col-span-5 system-panel p-4 rounded-sm flex flex-col justify-between">
+          <div>
+            <h3 class="font-orbitron font-bold text-sm text-cyan-300 mb-1">CONSISTENCY CHECK MATRIX</h3>
+            <p class="text-xs text-slate-400 mb-3">Daily system protocol execution</p>
+            
+            <div class="grid grid-cols-7 gap-2 text-center font-orbitron">
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">MON</div>
+                <div id="check-day-0" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">TUE</div>
+                <div id="check-day-1" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">WED</div>
+                <div id="check-day-2" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">THU</div>
+                <div id="check-day-3" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">FRI</div>
+                <div id="check-day-4" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">SAT</div>
+                <div id="check-day-5" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">SUN</div>
+                <div id="check-day-6" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-2 bg-slate-900/80 border border-slate-800 rounded text-xs text-slate-400 flex justify-between items-center">
+            <span>Weekly Completion:</span>
+            <span id="weekly-completion-rate" class="font-orbitron font-bold text-cyan-400">0%</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: DAILY QUEST DIRECTIVES -->
+    <section id="tab-quests" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/50 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">⚔️ DAILY QUEST DIRECTIVES</h2>
+          <p class="text-xs text-slate-400">Non-negotiable daily directives required for Hunter Rank elevation</p>
+        </div>
+        <div class="font-orbitron text-xs text-cyan-400 font-bold bg-cyan-950 px-3 py-1 border border-cyan-500/40 rounded">
+          COMPLETED: <span id="quests-completed-count">0</span> / 5
+        </div>
+      </div>
+
+      <div class="space-y-3 font-orbitron">
+        
+        <!-- Gym Directives -->
+        <div class="system-panel p-4 rounded-sm flex items-center justify-between transition-all hover:border-cyan-400/50 cursor-pointer" onclick="document.getElementById('quest-gym').click()">
+          <div class="flex items-center space-x-4 pointer-events-none">
+            <input type="checkbox" id="quest-gym" onchange="toggleQuest('gym')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100 flex items-center space-x-2">
+                <span>GYM TRAINING SESSION</span>
+                <span id="gym-day-tag" class="text-[10px] px-2 py-0.5 bg-slate-800 text-cyan-300 rounded font-mono">TODAY SPLIT</span>
+              </div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5" id="gym-day-description">Loading...</div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+50 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+8 GOLD</span>
+            <span class="text-emerald-400 font-bold ml-2">+0.5 STR</span>
+          </div>
+        </div>
+
+        <!-- Skin Care Stack -->
+        <div class="system-panel p-4 rounded-sm flex items-center justify-between transition-all hover:border-cyan-400/50 cursor-pointer" onclick="document.getElementById('quest-skin').click()">
+          <div class="flex items-center space-x-4 pointer-events-none">
+            <input type="checkbox" id="quest-skin" onchange="toggleQuest('skin')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">DAILY SKIN CARE STACK</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">CeraVe Cleanser + Simple Moisturiser + SPF 30 + Vaseline lash curl</div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+30 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+4 GOLD</span>
+          </div>
+        </div>
+
+        <!-- Sociology Revision -->
+        <div class="system-panel p-4 rounded-sm flex items-center justify-between transition-all hover:border-cyan-400/50 cursor-pointer" onclick="document.getElementById('quest-soc').click()">
+          <div class="flex items-center space-x-4 pointer-events-none">
+            <input type="checkbox" id="quest-soc" onchange="toggleQuest('soc')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">SOCIOLOGY REVISION BLOCK</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">Minimum 1 hour active recall towards A* Target</div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+40 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+8 GOLD</span>
+          </div>
+        </div>
+
+        <!-- Economics Revision -->
+        <div class="system-panel p-4 rounded-sm flex items-center justify-between transition-all hover:border-cyan-400/50 cursor-pointer" onclick="document.getElementById('quest-econ').click()">
+          <div class="flex items-center space-x-4 pointer-events-none">
+            <input type="checkbox" id="quest-econ" onchange="toggleQuest('econ')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">ECONOMICS REVISION BLOCK</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">Minimum 1 hour UpLearn / essay practice towards A* Target</div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+40 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+8 GOLD</span>
+          </div>
+        </div>
+
+        <!-- Food & Nutrition -->
+        <div class="system-panel p-4 rounded-sm flex items-center justify-between transition-all hover:border-cyan-400/50 cursor-pointer" onclick="document.getElementById('quest-food').click()">
+          <div class="flex items-center space-x-4 pointer-events-none">
+            <input type="checkbox" id="quest-food" onchange="toggleQuest('food')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">FOOD & NUTRITION PROTOCOL</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">Hit daily protein target (PSN Soy Isolate / Shake) + supplements</div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+35 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+5 GOLD</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SYSTEM PENALTY WARNING BANNER -->
+      <div class="p-4 bg-rose-950/40 border border-rose-500/50 rounded-sm font-orbitron flex items-start space-x-3">
+        <svg class="w-6 h-6 text-rose-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+          <div class="font-bold text-rose-300 text-sm">SYSTEM PENALTY PROTOCOL</div>
+          <p class="text-xs text-slate-300 font-sans mt-1">
+            Failing to complete daily quest directives before midnight causes your Shadow Rival to pull ahead and deducts <span class="text-rose-400 font-bold">-10 Gold</span> from your balance.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 3: UPLEARN STUDY HUB -->
+    <section id="tab-uplearn" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/50 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">📖 UPLEARN STUDY ENGINE</h2>
+          <p class="text-xs text-slate-400">Earn 8 Coins & high XP for every 1 hour of recorded focus time</p>
+        </div>
+        <div class="font-orbitron text-xs text-amber-400 font-bold bg-amber-950/60 px-3 py-1 border border-amber-500/40 rounded">
+          RATE: 8 COINS / 1.0 HOUR
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <div class="md:col-span-7 system-panel p-6 rounded-sm text-center flex flex-col justify-between space-y-6">
+          <div>
+            <span class="text-xs font-orbitron font-semibold text-slate-400 uppercase tracking-widest">ACTIVE REVISION STOPWATCH</span>
+            
+            <div id="stopwatch-display" class="font-orbitron font-black text-5xl md:text-6xl text-cyan-400 glow-text-cyan my-6 tracking-wider">
+              00:00:00
+            </div>
+
+            <div class="flex justify-center space-x-3 text-xs font-orbitron">
+              <select id="study-subject-select" class="bg-slate-900 border border-cyan-500/40 text-cyan-300 px-3 py-2 rounded">
+                <option value="Economics">A* Economics (UpLearn)</option>
+                <option value="Sociology">A* Sociology (Active Recall)</option>
+                <option value="Business">Distinction* CTEC Business</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex justify-center space-x-4 font-orbitron text-xs">
+            <button id="btn-timer-start" onclick="toggleTimer()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-sm glow-box-cyan transition-all">
+              ▶ START REVISION
+            </button>
+            <button id="btn-timer-stop" onclick="stopAndLogTimer()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-sm transition-all" disabled>
+              💾 STOP & LOG HOURS
+            </button>
+          </div>
+        </div>
+
+        <div class="md:col-span-5 system-panel p-5 rounded-sm space-y-4">
+          <h3 class="font-orbitron font-bold text-sm text-cyan-300">⚡ QUICK MANUAL REVISION LOG</h3>
+          
+          <div class="space-y-3 text-xs font-orbitron">
+            <div>
+              <label class="text-slate-400 block mb-1">Select Subject</label>
+              <select id="manual-subject" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded">
+                <option value="Economics">Economics A*</option>
+                <option value="Sociology">Sociology A*</option>
+                <option value="Business">CTEC Business D*</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-slate-400 block mb-1">Hours Completed</label>
+              <input type="number" id="manual-hours" step="0.25" min="0.25" placeholder="e.g. 1.5" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded">
+            </div>
+
+            <button onclick="logManualHours()" class="w-full py-2.5 bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 font-bold rounded transition-all">
+              + LOG REVISION HOURS (+8 COINS/HR)
+            </button>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 space-y-2 font-orbitron text-xs">
+            <div class="text-slate-400 font-bold text-[11px]">SUBJECT ACCUMULATED HOURS</div>
+            <div class="flex justify-between bg-slate-900/80 p-2 rounded">
+              <span>Economics:</span>
+              <span id="tot-hrs-econ" class="text-cyan-400 font-bold">0.0 hrs</span>
+            </div>
+            <div class="flex justify-between bg-slate-900/80 p-2 rounded">
+              <span>Sociology:</span>
+              <span id="tot-hrs-soc" class="text-cyan-400 font-bold">0.0 hrs</span>
+            </div>
+            <div class="flex justify-between bg-slate-900/80 p-2 rounded">
+              <span>CTEC Business:</span>
+              <span id="tot-hrs-biz" class="text-cyan-400 font-bold">0.0 hrs</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 4: HEVY GYM LOG & AI EVALUATOR -->
+    <section id="tab-hevy" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/50 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">🏋️ HEVY WORKOUT & AI MATRIX</h2>
+          <p class="text-xs text-slate-400">Preloaded weekly split with automated +0.5 Strength rewards[cite: 6]</p>
+        </div>
+        <div class="font-orbitron text-xs text-emerald-400 font-bold bg-emerald-950/60 px-3 py-1 border border-emerald-500/40 rounded">
+          REWARD: +8 COINS & +0.5 STR / SESSION
+        </div>
+      </div>
+
+      <div class="system-panel p-5 rounded-sm space-y-4">
+        <h3 class="font-orbitron font-bold text-sm text-cyan-300">📅 PRELOADED WEEKLY GYM SCHEDULE</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-2 text-xs font-orbitron">
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">MON: PUSH & ARMS</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Chest, Shoulders, Biceps (1), Abs[cite: 6]</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">TUE: PULL & ARMS</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Back (Lats/Traps), Triceps (1), Abs[cite: 6]</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">WED: ARMS & HANG</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Biceps (2), Lateral Delts, Abs, Dead Hangs[cite: 6]</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">THU: CHEST & BACK</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Chest, Back Thickness, Triceps (2), Abs[cite: 6]</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">FRI: LEGS & ABS</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Legs (Football Power), Abs[cite: 6]</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">SAT: PUMP & UPPER</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Biceps (3), Shoulder Width, Upper Chest, Abs[cite: 6]</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded opacity-75">
+            <div class="text-amber-400 font-bold text-[11px]">SUN: TOTAL REST</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Sleep 10 hours for growth[cite: 6]</div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-wrap gap-3 items-center justify-between">
+          <button onclick="logTodayWorkout()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 font-orbitron font-bold text-xs text-white rounded glow-box-cyan transition-all">
+            🏋️ COMPLETE & LOG TODAY'S GYM SESSION (+8 COINS, +0.5 STR)
+          </button>
+          <span class="text-xs text-slate-400 font-orbitron">
+            Sessions Logged: <span id="hevy-completed-count" class="text-cyan-400 font-bold">0</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="system-panel p-5 rounded-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-orbitron font-bold text-sm text-cyan-300">🤖 GEMINI AI TRAINER & PHOTO EVALUATOR</h3>
+          <span class="text-[10px] font-orbitron bg-cyan-950 text-cyan-400 border border-cyan-600/40 px-2 py-0.5 rounded">
+            GEMINI 2.5 FLASH API
+          </span>
+        </div>
+
+        <div class="text-xs font-orbitron space-y-1">
+          <label class="text-slate-400 block">Gemini API Key (Stored locally):</label>
+          <div class="flex gap-2">
+            <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded">
+            <button onclick="saveApiKey()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">
+              SAVE KEY
+            </button>
+          </div>
+        </div>
+
+        <div id="ai-response-box" class="h-40 bg-slate-950/90 border border-slate-800 rounded p-3 text-xs font-mono text-slate-300 overflow-y-auto whitespace-pre-wrap">
+          [SYSTEM AI READY] Ask me to review your workout split or upload a photo of your workout notes.
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input type="text" id="ai-prompt-input" placeholder="Ask AI Trainer a question..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-xs">
+          
+          <input type="file" id="ai-image-input" accept="image/*" class="hidden" onchange="handleImageSelected(event)">
+          <button onclick="document.getElementById('ai-image-input').click()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-orbitron flex items-center gap-1 justify-center">
+            📷 <span id="image-label">ATTACH PHOTO</span>
+          </button>
+
+          <button onclick="sendAiQuery()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-orbitron font-bold text-xs rounded">
+            SEND
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 5: SHOP & RIVAL -->
+    <section id="tab-shop" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/50 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">🛒 SYSTEM SHOP & RIVAL STATUS</h2>
+          <p class="text-xs text-slate-400">Exchange Gold coins for rewards & inspect Shadow Rival metrics</p>
+        </div>
+        <div class="font-orbitron text-xs text-amber-400 font-bold bg-amber-950/60 px-3 py-1 border border-amber-500/40 rounded">
+          GOLD: <span id="shop-gold-display">0</span> PTS
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-orbitron">
+        <div class="system-panel p-4 rounded-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-cyan-400 font-bold">REWARD: REST DAY PASS</div>
+            <p class="text-xs text-slate-400 font-sans mt-1">Exempts 1 day of missed quests without streak reset.</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="text-amber-400 text-sm font-bold">40 GOLD</span>
+            <button onclick="buyShopItem('Rest Pass', 40)" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs rounded">
+              BUY
+            </button>
+          </div>
+        </div>
+
+        <div class="system-panel p-4 rounded-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-cyan-400 font-bold">REWARD: XP BOOST (2X)</div>
+            <p class="text-xs text-slate-400 font-sans mt-1">Doubles all XP earned from study blocks for 24 hours.</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="text-amber-400 text-sm font-bold">60 GOLD</span>
+            <button onclick="buyShopItem('XP Multiplier', 60)" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs rounded">
+              BUY
+            </button>
+          </div>
+        </div>
+
+        <div class="system-panel p-4 rounded-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-cyan-400 font-bold">REWARD: STAT BOOST (+2)</div>
+            <p class="text-xs text-slate-400 font-sans mt-1">Instantly grants +2.0 attribute points to your Spider Radar Wheel.</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="text-amber-400 text-sm font-bold">80 GOLD</span>
+            <button onclick="buyShopItem('Stat Boost', 80)" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs rounded">
+              BUY
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="system-panel system-panel-ghost p-5 rounded-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-purple-500/30 pb-2">
+          <h3 class="font-orbitron font-bold text-sm text-purple-300">👻 SHADOW RIVAL (IDEAL SELF MIRROR)</h3>
+          <span class="text-xs font-orbitron text-purple-400 font-bold">EQUAL BASELINE START</span>
+        </div>
+
+        <p class="text-xs text-slate-300 font-sans">
+          The Shadow Rival represents your ideal self who never slacks off. He executes relentless daily volume toward A* in Economics, A* in Sociology, Distinction* in CTEC Business, and gym consistency[cite: 6].
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-orbitron">
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">RIVAL LEVEL</div>
+            <div class="text-lg font-bold text-purple-300" id="ghost-level-display">L1</div>
+          </div>
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">RIVAL REVISION</div>
+            <div class="text-lg font-bold text-purple-300" id="ghost-hours-display">0.0 hrs</div>
+          </div>
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">RIVAL GYM SESSIONS</div>
+            <div class="text-lg font-bold text-purple-300" id="ghost-gym-display">0</div>
+          </div>
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">CURRENT GAP</div>
+            <div class="text-lg font-bold text-rose-400" id="ghost-gap-display">EQUAL</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const DEFAULT_DATA = {
+      level: 1, rank: "E-Rank Hunter", xp: 0, gold: 0, streak: 0, bestStreak: 0,
+      econHours: 0.0, socHours: 0.0, bizHours: 0.0,
+      stats: { iq: 0.0, str: 0.0, disc: 0.0, end: 0.0, foc: 0.0, con: 0.0 },
+      ghost: {
+        level: 1, econHours: 0.0, socHours: 0.0, bizHours: 0.0, gymSessions: 0,
+        stats: { iq: 0.0, str: 0.0, disc: 0.0, end: 0.0, foc: 0.0, con: 0.0 }
+      },
+      quests: { gym: false, skin: false, soc: false, econ: false, food: false },
+      gymSessionsCount: 0,
+      weeklyXp: [0, 0, 0, 0, 0, 0, 0],
+      weeklyChecks: [false, false, false, false, false, false, false]
+    };
+
+    let appData = JSON.parse(localStorage.getItem('SYSTEM_HUD_V3_1_DATA')) || JSON.parse(JSON.stringify(DEFAULT_DATA));
+    let stopwatchInterval = null;
+    let stopwatchSeconds = 0;
+    let selectedImageBase64 = null;
+    let radarChartInstance = null;
+    let activityChartInstance = null;
+
+    const GYM_SCHEDULE = [
+      { day: "MON", title: "PUSH & ARMS", desc: "Chest, Shoulders, Biceps (1), Abs" },[cite: 6]
+      { day: "TUE", title: "PULL & ARMS", desc: "Back (Lats/Traps), Triceps (1), Abs" },[cite: 6]
+      { day: "WED", title: "ARMS & DEEP HANGS", desc: "Biceps (2), Lateral Delts, Abs, Dead Hangs" },[cite: 6]
+      { day: "THU", title: "CHEST & BACK", desc: "Chest, Back (Traps/Thickness), Triceps (2), Abs" },[cite: 6]
+      { day: "FRI", title: "LEGS & FOOTBALL POWER", desc: "Legs (Football Power), Abs" },[cite: 6]
+      { day: "SAT", title: "PUMP & UPPER CHEST", desc: "Biceps (3), Shoulder Width, Upper Chest (Pump), Abs" },[cite: 6]
+      { day: "SUN", title: "TOTAL REST & GROWTH", desc: "Total Rest (Sleep 10 hours for growth)" }[cite: 6]
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const storedKey = localStorage.getItem('GEMINI_API_KEY');
+      if (storedKey) document.getElementById('gemini-api-key').value = storedKey;
+
+      updateTodayGymScheduleText();
+      simulateGhostGrowth();
+      saveAndRefreshUI();
+      initCharts();
+    });
+
+    function saveAndRefreshUI() {
+      localStorage.setItem('SYSTEM_HUD_V3_1_DATA', JSON.stringify(appData));
+
+      document.getElementById('header-level').innerText = `L${appData.level}`;
+      document.getElementById('header-rank-badge').innerText = appData.rank;
+      document.getElementById('header-gold').innerText = Math.floor(appData.gold);
+
+      const currentLevelCap = appData.level * 100;
+      const currentLevelXp = appData.xp % currentLevelCap;
+      document.getElementById('header-exp-num').innerText = `${Math.floor(currentLevelXp)}/${currentLevelCap}`;
+      const xpPct = Math.min(100, (currentLevelXp / currentLevelCap) * 100);
+      document.getElementById('header-exp-bar').style.width = `${xpPct}%`;
+
+      document.getElementById('kpi-level').innerText = appData.level;
+      document.getElementById('kpi-rank').innerText = appData.rank;
+      document.getElementById('kpi-today-xp').innerText = Math.floor(appData.weeklyXp[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1] || 0);
+      document.getElementById('kpi-total-xp').innerText = Math.floor(appData.xp);
+      document.getElementById('kpi-streak').innerText = appData.streak;
+      document.getElementById('kpi-best-streak').innerText = appData.bestStreak;
+
+      document.getElementById('stat-val-iq').innerText = appData.stats.iq.toFixed(1);
+      document.getElementById('stat-val-str').innerText = appData.stats.str.toFixed(1);
+      document.getElementById('stat-val-disc').innerText = appData.stats.disc.toFixed(1);
+      document.getElementById('stat-val-end').innerText = appData.stats.end.toFixed(1);
+      document.getElementById('stat-val-foc').innerText = appData.stats.foc.toFixed(1);
+      document.getElementById('stat-val-con').innerText = appData.stats.con.toFixed(1);
+
+      const totEcon = appData.econHours;
+      const totSoc = appData.socHours;
+      const totBiz = appData.bizHours;
+
+      document.getElementById('goal-econ-you').innerText = totEcon.toFixed(1);
+      document.getElementById('goal-soc-you').innerText = totSoc.toFixed(1);
+      document.getElementById('goal-biz-you').innerText = totBiz.toFixed(1);
+
+      document.getElementById('tot-hrs-econ').innerText = `${totEcon.toFixed(1)} hrs`;
+      document.getElementById('tot-hrs-soc').innerText = `${totSoc.toFixed(1)} hrs`;
+      document.getElementById('tot-hrs-biz').innerText = `${totBiz.toFixed(1)} hrs`;
+
+      const youEconPct = Math.min(100, (totEcon / 120) * 100);
+      const ghostEconPct = Math.min(100, (appData.ghost.econHours / 120) * 100);
+      document.getElementById('bar-econ-you').style.width = `${youEconPct}%`;
+      document.getElementById('bar-econ-ghost').style.width = `${ghostEconPct}%`;
+      document.getElementById('you-econ-pct').innerText = `${youEconPct.toFixed(0)}%`;
+      document.getElementById('ghost-econ-pct').innerText = `${ghostEconPct.toFixed(0)}%`;
+
+      const youSocPct = Math.min(100, (totSoc / 120) * 100);
+      const ghostSocPct = Math.min(100, (appData.ghost.socHours / 120) * 100);
+      document.getElementById('bar-soc-you').style.width = `${youSocPct}%`;
+      document.getElementById('bar-soc-ghost').style.width = `${ghostSocPct}%`;
+      document.getElementById('you-soc-pct').innerText = `${youSocPct.toFixed(0)}%`;
+      document.getElementById('ghost-soc-pct').innerText = `${ghostSocPct.toFixed(0)}%`;
+
+      const youBizPct = Math.min(100, (totBiz / 90) * 100);
+      const ghostBizPct = Math.min(100, (appData.ghost.bizHours / 90) * 100);
+      document.getElementById('bar-biz-you').style.width = `${youBizPct}%`;
+      document.getElementById('bar-biz-ghost').style.width = `${ghostBizPct}%`;
+      document.getElementById('you-biz-pct').innerText = `${youBizPct.toFixed(0)}%`;
+      document.getElementById('ghost-biz-pct').innerText = `${ghostBizPct.toFixed(0)}%`;
+
+      document.getElementById('quest-gym').checked = appData.quests.gym;
+      document.getElementById('quest-skin').checked = appData.quests.skin;
+      document.getElementById('quest-soc').checked = appData.quests.soc;
+      document.getElementById('quest-econ').checked = appData.quests.econ;
+      document.getElementById('quest-food').checked = appData.quests.food;
+
+      const completedQuests = Object.values(appData.quests).filter(Boolean).length;
+      document.getElementById('quests-completed-count').innerText = completedQuests;
+
+      document.getElementById('hevy-completed-count').innerText = appData.gymSessionsCount;
+      document.getElementById('shop-gold-display').innerText = Math.floor(appData.gold);
+
+      const totalYouHours = totEcon + totSoc + totBiz;
+      const totalGhostHours = appData.ghost.econHours + appData.ghost.socHours + appData.ghost.bizHours;
+      const hourGap = totalGhostHours - totalYouHours;
+
+      document.getElementById('ghost-level-display').innerText = `L${appData.ghost.level}`;
+      document.getElementById('ghost-hours-display').innerText = `${totalGhostHours.toFixed(1)} hrs`;
+      document.getElementById('ghost-gym-display').innerText = appData.ghost.gymSessions;
+      
+      const statusText = document.getElementById('analytics-rival-status-text');
+      const gapText = document.getElementById('analytics-gap-hours');
+      const ghostGapDisplay = document.getElementById('ghost-gap-display');
+
+      if (hourGap <= 0) {
+        statusText.innerText = "SURPASSED";
+        statusText.className = "text-emerald-400 font-bold";
+        gapText.innerText = `+${Math.abs(hourGap).toFixed(1)}h ahead`;
+        ghostGapDisplay.innerText = "BEATEN";
+        ghostGapDisplay.className = "text-emerald-400 text-lg font-bold";
+      } else if (hourGap < 3) {
+        statusText.innerText = "NECK AND NECK";
+        statusText.className = "text-amber-400 font-bold";
+        gapText.innerText = `${hourGap.toFixed(1)}h behind`;
+        ghostGapDisplay.innerText = `-${hourGap.toFixed(1)}h`;
+        ghostGapDisplay.className = "text-amber-400 text-lg font-bold";
+      } else {
+        statusText.innerText = "GHOST AHEAD";
+        statusText.className = "text-rose-400 font-bold";
+        gapText.innerText = `-${hourGap.toFixed(1)}h behind`;
+        ghostGapDisplay.innerText = `-${hourGap.toFixed(1)}h`;
+        ghostGapDisplay.className = "text-rose-400 text-lg font-bold";
+      }
+
+      let completedDays = 0;
+      for (let i = 0; i < 7; i++) {
+        const el = document.getElementById(`check-day-${i}`);
+        if (appData.weeklyChecks[i]) {
+          el.className = "w-full aspect-square rounded bg-emerald-950/90 border border-emerald-500 text-emerald-300 flex items-center justify-center text-xs font-bold glow-box-cyan";
+          el.innerText = "✓";
+          completedDays++;
+        } else {
+          el.className = "w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold";
+          el.innerText = "✕";
+        }
+      }
+      document.getElementById('weekly-completion-rate').innerText = `${Math.round((completedDays / 7) * 100)}%`;
+
+      if (radarChartInstance) updateCharts();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-cyan-400', 'bg-cyan-950/80', 'border', 'border-cyan-400/50', 'glow-box-cyan');
+        btn.classList.add('text-slate-400');
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      activeBtn.classList.add('text-cyan-400', 'bg-cyan-950/80', 'border', 'border-cyan-400/50', 'glow-box-cyan');
+      activeBtn.classList.remove('text-slate-400');
+    }
+
+    function toggleTimer() {
+      const startBtn = document.getElementById('btn-timer-start');
+      const stopBtn = document.getElementById('btn-timer-stop');
+
+      if (!stopwatchInterval) {
+        stopwatchInterval = setInterval(() => {
+          stopwatchSeconds++;
+          const hrs = String(Math.floor(stopwatchSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((stopwatchSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(stopwatchSeconds % 60).padStart(2, '0');
+          document.getElementById('stopwatch-display').innerText = `${hrs}:${mins}:${secs}`;
+        }, 1000);
+
+        startBtn.innerText = "⏸ PAUSE";
+        startBtn.classList.replace('bg-cyan-500', 'bg-amber-600');
+        stopBtn.disabled = false;
+      } else {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+        startBtn.innerText = "▶ RESUME";
+        startBtn.classList.replace('bg-amber-600', 'bg-cyan-500');
+      }
+    }
+
+    function stopAndLogTimer() {
+      if (stopwatchInterval) {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+      }
+      const hoursEarned = stopwatchSeconds / 3600;
+      if (hoursEarned > 0.01) {
+        const subject = document.getElementById('study-subject-select').value;
+        addStudyHours(subject, hoursEarned);
+      }
+      stopwatchSeconds = 0;
+      document.getElementById('stopwatch-display').innerText = "00:00:00";
+      document.getElementById('btn-timer-start').innerText = "▶ START REVISION";
+      document.getElementById('btn-timer-start').classList.replace('bg-amber-600', 'bg-cyan-500');
+      document.getElementById('btn-timer-stop').disabled = true;
+    }
+
+    function logManualHours() {
+      const subject = document.getElementById('manual-subject').value;
+      const hours = parseFloat(document.getElementById('manual-hours').value);
+      if (isNaN(hours) || hours <= 0) {
+        alert("Please enter valid hours.");
+        return;
+      }
+      addStudyHours(subject, hours);
+      document.getElementById('manual-hours').value = "";
+    }
+
+    function addStudyHours(subject, hours) {
+      const goldEarned = hours * 8;
+      const xpEarned = hours * 30;
+
+      appData.gold += goldEarned;
+      appData.xp += xpEarned;
+
+      if (subject === 'Economics') appData.econHours += hours;
+      else if (subject === 'Sociology') appData.socHours += hours;
+      else if (subject === 'Business') appData.bizHours += hours;
+
+      appData.stats.iq = Math.min(100, appData.stats.iq + hours * 0.8);
+      appData.stats.foc = Math.min(100, appData.stats.foc + hours * 0.6);
+      appData.stats.end = Math.min(100, appData.stats.end + hours * 0.5);
+
+      checkLevelUp();
+      saveAndRefreshUI();
+      alert(`LOGGED ${hours.toFixed(2)}h IN ${subject.toUpperCase()}!\n+${goldEarned.toFixed(1)} Gold\n+${xpEarned.toFixed(0)} XP`);
+    }
+
+    function logTodayWorkout() {
+      appData.gymSessionsCount++;
+      appData.gold += 8;
+      appData.stats.str = Math.min(100, appData.stats.str + 0.5);
+      appData.stats.disc = Math.min(100, appData.stats.disc + 0.5);
+      appData.quests.gym = true;
+      appData.xp += 50;
+
+      checkLevelUp();
+      saveAndRefreshUI();
+      alert("GYM SESSION LOGGED!\n+8 Gold\n+0.5 Strength\nDaily Gym Quest Completed!");
+    }
+
+    function updateTodayGymScheduleText() {
+      const dayIdx = new Date().getDay();
+      const mapIdx = dayIdx === 0 ? 6 : dayIdx - 1;
+      const today = GYM_SCHEDULE[mapIdx];
+      document.getElementById('gym-day-tag').innerText = `TODAY (${today.day})`;
+      document.getElementById('gym-day-description').innerText = `${today.title}: ${today.desc}`;[cite: 6]
+    }
+
+    function toggleQuest(questKey) {
+      const isChecked = document.getElementById(`quest-${questKey}`).checked;
+      appData.quests[questKey] = isChecked;
+
+      if (isChecked) {
+        if (questKey === 'gym') { appData.gold += 8; appData.xp += 50; appData.stats.str += 0.5; }
+        if (questKey === 'skin') { appData.gold += 4; appData.xp += 30; }
+        if (questKey === 'soc') { appData.gold += 8; appData.xp += 40; appData.stats.iq += 0.4; }
+        if (questKey === 'econ') { appData.gold += 8; appData.xp += 40; appData.stats.iq += 0.4; }
+        if (questKey === 'food') { appData.gold += 5; appData.xp += 35; }
+      }
+
+      const completed = Object.values(appData.quests).filter(Boolean).length;
+      const dayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+      appData.weeklyChecks[dayIdx] = completed >= 3;
+      appData.stats.con = Math.min(100, (completed / 5) * 100);
+
+      checkLevelUp();
+      saveAndRefreshUI();
+    }
+
+    function simulateGhostGrowth() {
+      const daysPassed = Math.max(1, Math.floor(appData.xp / 150));
+      appData.ghost.econHours = Math.max(appData.ghost.econHours, daysPassed * 1.8);
+      appData.ghost.socHours = Math.max(appData.ghost.socHours, daysPassed * 1.8);
+      appData.ghost.bizHours = Math.max(appData.ghost.bizHours, daysPassed * 1.2);
+      appData.ghost.gymSessions = Math.max(appData.ghost.gymSessions, Math.floor(daysPassed * 0.85));
+
+      appData.ghost.stats.iq = Math.min(100, (appData.ghost.econHours + appData.ghost.socHours) * 0.4);
+      appData.ghost.stats.str = Math.min(100, appData.ghost.gymSessions * 0.8);
+      appData.ghost.stats.disc = Math.min(100, daysPassed * 8.0);
+      appData.ghost.stats.end = Math.min(100, daysPassed * 7.5);
+      appData.ghost.stats.foc = Math.min(100, daysPassed * 8.5);
+      appData.ghost.stats.con = 95.0;
+      appData.ghost.level = Math.max(1, Math.floor((appData.ghost.econHours + appData.ghost.socHours + appData.ghost.bizHours) / 3));
+    }
+
+    function checkLevelUp() {
+      const nextLevelCap = appData.level * 100;
+      if (appData.xp >= nextLevelCap) {
+        appData.level++;
+        if (appData.level >= 10) appData.rank = "S-Rank Monarch";
+        else if (appData.level >= 7) appData.rank = "A-Rank Hunter";
+        else if (appData.level >= 5) appData.rank = "B-Rank Hunter";
+        else if (appData.level >= 3) appData.rank = "C-Rank Hunter";
+        else if (appData.level >= 2) appData.rank = "D-Rank Hunter";
+        alert(`🎉 LEVEL UP! LEVEL ${appData.level} (${appData.rank})!`);
+      }
+    }
+
+    function buyShopItem(name, cost) {
+      if (appData.gold < cost) {
+        alert("INSUFFICIENT GOLD!");
+        return;
+      }
+      appData.gold -= cost;
+      if (name === 'Stat Boost') {
+        appData.stats.iq += 2.0;
+        appData.stats.str += 2.0;
+      }
+      saveAndRefreshUI();
+      alert(`PURCHASED ${name.toUpperCase()}!`);
+    }
+
+    function resetDataConfirmation() {
+      if (confirm("Reset all data to zero?")) {
+        appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        saveAndRefreshUI();
+      }
+    }
+
+    function saveApiKey() {
+      const key = document.getElementById('gemini-api-key').value.trim();
+      localStorage.setItem('GEMINI_API_KEY', key);
+      alert("API Key saved.");
+    }
+
+    function handleImageSelected(evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedImageBase64 = e.target.result.split(',')[1];
+        document.getElementById('image-label').innerText = "ATTACHED ✓";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function sendAiQuery() {
+      const apiKey = document.getElementById('gemini-api-key').value.trim() || localStorage.getItem('GEMINI_API_KEY');
+      const promptText = document.getElementById('ai-prompt-input').value.trim();
+      const responseBox = document.getElementById('ai-response-box');
+
+      if (!apiKey) {
+        alert("Enter API Key first.");
+        return;
+      }
+      if (!promptText && !selectedImageBase64) {
+        alert("Enter message or attach image.");
+        return;
+      }
+
+      responseBox.innerText = "[THINKING...]";
+
+      const requestBody = { contents: [{ parts: [] }] };
+      if (promptText) requestBody.contents[0].parts.push({ text: `User context: 5'8.5", 58.5kg. Goals: A* Economics, A* Sociology, Distinction* CTEC Business. Prompt: ${promptText}` });
+      if (selectedImageBase64) requestBody.contents[0].parts.push({ inline_data: { mime_type: "image/jpeg", data: selectedImageBase64 } });
+
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await res.json();
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+          responseBox.innerText = data.candidates[0].content.parts[0].text;
+        } else {
+          responseBox.innerText = "[ERROR] Invalid response format.";
+        }
+      } catch (err) {
+        responseBox.innerText = `[ERROR] ${err.message}`;
+      }
+
+      selectedImageBase64 = null;
+      document.getElementById('image-label').innerText = "ATTACH PHOTO";
+      document.getElementById('ai-prompt-input').value = "";
+    }
+
+    function initCharts() {
+      const radarCtx = document.getElementById('radarChart').getContext('2d');
+      radarChartInstance = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: ['IQ (INT)', 'STRENGTH', 'DISCIPLINE', 'ENDURANCE', 'FOCUS', 'CONSISTENCY'],
+          datasets: [
+            {
+              label: 'YOU',
+              data: [appData.stats.iq, appData.stats.str, appData.stats.disc, appData.stats.end, appData.stats.foc, appData.stats.con],
+              backgroundColor: 'rgba(0, 240, 255, 0.25)',
+              borderColor: '#00f0ff',
+              borderWidth: 2,
+              pointBackgroundColor: '#00f0ff'
+            },
+            {
+              label: 'GHOST',
+              data: [appData.ghost.stats.iq, appData.ghost.stats.str, appData.ghost.stats.disc, appData.ghost.stats.end, appData.ghost.stats.foc, appData.ghost.stats.con],
+              backgroundColor: 'rgba(168, 85, 247, 0.2)',
+              borderColor: '#a855f7',
+              borderWidth: 2,
+              borderDash: [4, 4],
+              pointBackgroundColor: '#a855f7'
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(0, 240, 255, 0.2)' },
+              grid: { color: 'rgba(0, 240, 255, 0.15)' },
+              pointLabels: { color: '#94a3b8', font: { family: 'Orbitron', size: 10, weight: 'bold' } },
+              ticks: { display: false, beginAtZero: true, max: 100 }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      const activityCtx = document.getElementById('weeklyActivityChart').getContext('2d');
+      activityChartInstance = new Chart(activityCtx, {
+        type: 'line',
+        data: {
+          labels: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+          datasets: [{
+            label: 'XP',
+            data: appData.weeklyXp,
+            borderColor: '#00f0ff',
+            backgroundColor: 'rgba(0, 240, 255, 0.1)',
+            fill: true, tension: 0.4, borderWidth: 2, pointBackgroundColor: '#00f0ff'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'Orbitron', size: 10 } } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'Orbitron', size: 10 } } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function updateCharts() {
+      if (!radarChartInstance) return;
+      radarChartInstance.data.datasets[0].data = [appData.stats.iq, appData.stats.str, appData.stats.disc, appData.stats.end, appData.stats.foc, appData.stats.con];
+      radarChartInstance.data.datasets[1].data = [appData.ghost.stats.iq, appData.ghost.stats.str, appData.ghost.stats.disc, appData.ghost.stats.end, appData.ghost.stats.foc, appData.ghost.stats.con];
+      radarChartInstance.update();
+      activityChartInstance.data.datasets[0].data = appData.weeklyXp;
+      activityChartInstance.update();
+    }
+  </script>
+</body>
+</html>
