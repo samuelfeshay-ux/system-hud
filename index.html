@@ -1,416 +1,976 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYSTEM HUD // E-RANK ASCENSION</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SYSTEM HUD // ADVANCED SOLO LEVELING INTERFACE</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN for Analytics & Radar Wheel -->
+  
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Google Fonts: Orbitron & Rajdhani -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --cyan-glow: #00f0ff;
-      --cyan-dim: #008b9b;
-      --dark-bg: #060913;
-      --panel-bg: rgba(10, 16, 30, 0.95);
-      --panel-border: rgba(0, 240, 255, 0.4);
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            system: {
+              bg: '#040711',
+              panel: 'rgba(9, 15, 30, 0.95)',
+              border: 'rgba(0, 240, 255, 0.3)',
+              cyan: '#00f0ff',
+              gold: '#fbbf24',
+              ghost: '#a855f7',
+              rose: '#f43f5e',
+              emerald: '#10b981'
+            }
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            rajdhani: ['Rajdhani', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
     }
+  </script>
+
+  <style>
+    /* CSS RESET & POINTER EVENTS CORRECTION */
+    *, ::before, ::after {
+      box-sizing: border-box;
+      touch-action: manipulation;
+    }
+
     body {
-      background-color: var(--dark-bg);
+      background-color: #040711;
       color: #e2e8f0;
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+        linear-gradient(to bottom, rgba(4, 7, 17, 0.98), rgba(4, 7, 17, 1));
+      background-attachment: fixed;
+      -webkit-tap-highlight-color: transparent;
     }
-    .font-orbitron { font-family: 'Orbitron', sans-serif; }
-    
-    .system-panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.08);
-      position: relative;
-    }
-    .system-panel-ghost {
-      background: rgba(20, 10, 30, 0.95);
-      border: 1px solid rgba(168, 85, 247, 0.5);
-    }
-    .glow-text-cyan { text-shadow: 0 0 8px rgba(0, 240, 255, 0.6); }
-    .glow-box-cyan { box-shadow: 0 0 12px rgba(0, 240, 255, 0.3); }
 
-    /* Force all interactive elements to be fully clickable above everything */
-    button, input, select, label, .clickable {
+    /* SOLO LEVELING UI SYSTEM PANELS */
+    .system-card {
+      background: rgba(9, 15, 30, 0.92);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.04), inset 0 0 15px rgba(0, 240, 255, 0.02);
+      backdrop-filter: blur(12px);
       position: relative;
-      z-index: 50;
+    }
+
+    .system-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; width: 8px; height: 8px;
+      border-top: 2px solid #00f0ff;
+      border-left: 2px solid #00f0ff;
+      pointer-events: none;
+    }
+
+    .system-card::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px; width: 8px; height: 8px;
+      border-bottom: 2px solid #00f0ff;
+      border-right: 2px solid #00f0ff;
+      pointer-events: none;
+    }
+
+    .system-card-ghost {
+      background: rgba(20, 10, 32, 0.92);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.06);
+    }
+
+    .system-card-ghost::before {
+      border-top-color: #a855f7;
+      border-left-color: #a855f7;
+    }
+    .system-card-ghost::after {
+      border-bottom-color: #a855f7;
+      border-right-color: #a855f7;
+    }
+
+    .glow-cyan { text-shadow: 0 0 10px rgba(0, 240, 255, 0.7); }
+    .glow-gold { text-shadow: 0 0 10px rgba(251, 191, 36, 0.7); }
+    .glow-ghost { text-shadow: 0 0 10px rgba(168, 85, 247, 0.7); }
+    .glow-box-cyan { box-shadow: 0 0 15px rgba(0, 240, 255, 0.25); }
+
+    /* ABSOLUTE INTERACTION GUARANTEE */
+    button, input, select, textarea, label, [role="button"] {
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 20;
       cursor: pointer;
     }
-    input[type="text"], input[type="number"], input[type="password"], select {
-      cursor: text;
+
+    input[type="text"], input[type="number"], input[type="password"], textarea, select {
+      cursor: text !important;
     }
+
+    /* CUSTOM SCROLLBARS */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #040711; }
+    ::-webkit-scrollbar-thumb { background: #008b9b; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
   </style>
 </head>
-<body class="pb-20 text-slate-200">
+<body class="text-slate-200">
 
-  <!-- TOP SYSTEM HEADER -->
-  <header class="sticky top-0 z-50 bg-[#060913] border-b border-cyan-500/40 px-4 py-3">
+  <!-- TOP SYSTEM HUD HEADER -->
+  <header class="sticky top-0 z-50 bg-[#040711]/95 border-b border-cyan-500/30 backdrop-blur-md px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Hunter Rank Badge & Title -->
       <div class="flex items-center space-x-3">
-        <div class="flex items-center justify-center w-11 h-11 bg-cyan-950 border border-cyan-400 font-orbitron font-black text-lg text-cyan-300 rounded glow-box-cyan">
+        <div class="flex items-center justify-center w-12 h-12 bg-cyan-950/80 border border-cyan-400 font-orbitron font-black text-xl text-cyan-300 rounded-sm glow-box-cyan">
           <span id="header-level">L1</span>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="font-orbitron font-extrabold text-base md:text-lg text-white glow-text-cyan">
-              SYSTEM HUD <span class="text-xs text-cyan-400">v3.2</span>
+            <h1 class="font-orbitron font-extrabold text-lg md:text-xl tracking-wider text-white glow-cyan">
+              SYSTEM HUD <span class="text-xs text-cyan-400 font-normal">v4.0 ADVANCED</span>
             </h1>
-            <span id="header-rank-badge" class="px-2 py-0.5 text-[10px] font-orbitron font-bold bg-slate-800 text-slate-300 border border-slate-600 rounded">
-              E-RANK
+            <span id="header-rank-badge" class="px-2 py-0.5 text-[10px] font-orbitron font-bold bg-slate-800 text-cyan-300 border border-cyan-500/50 rounded">
+              E-RANK HUNTER
             </span>
           </div>
-          <p class="text-[10px] text-slate-400 uppercase tracking-widest">ZERO BASELINE PROTOCOL</p>
+          <p class="text-[10px] font-mono text-slate-400 tracking-widest uppercase">STATUS: ACTIVE HUNTER PROTOCOL // ABSOLUTE ZERO BASELINE</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-4">
+      <!-- Currency & EXP Status -->
+      <div class="flex items-center space-x-6">
         <!-- Gold Balance -->
-        <div class="flex items-center space-x-2 bg-amber-950/80 border border-amber-500/60 px-3 py-1.5 rounded">
+        <div class="flex items-center space-x-2.5 bg-amber-950/60 border border-amber-500/50 px-3.5 py-1.5 rounded-sm">
+          <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8.5 6h3a.5.5 0 010 1H9v2h2.5a1.5 1.5 0 010 3H9v2a.5.5 0 01-1 0v-2H6.5a.5.5 0 010-1H9v-2H6.5a1.5 1.5 0 010-3H8.5V6z"/>
+          </svg>
           <div>
-            <div class="text-[9px] uppercase tracking-wider text-amber-400 font-bold leading-none">GOLD</div>
-            <div class="font-orbitron font-bold text-amber-300 text-xs leading-tight"><span id="header-gold">0</span> PTS</div>
+            <div class="text-[9px] font-orbitron font-bold uppercase tracking-wider text-amber-400/80 leading-none">GOLD COINS</div>
+            <div class="font-orbitron font-bold text-amber-300 text-sm leading-tight"><span id="header-gold">0</span> PTS</div>
           </div>
         </div>
 
-        <!-- XP Bar -->
-        <div class="w-32 md:w-40">
+        <!-- Level EXP Bar -->
+        <div class="w-36 md:w-48">
           <div class="flex justify-between text-[10px] font-orbitron mb-1">
-            <span class="text-cyan-400 font-semibold">EXP</span>
-            <span class="text-slate-400" id="header-exp-num">0/100</span>
+            <span class="text-cyan-400 font-semibold">EXP PROGRESS</span>
+            <span class="text-slate-400" id="header-exp-num">0 / 100</span>
           </div>
-          <div class="w-full h-2 bg-slate-900 border border-cyan-900 rounded overflow-hidden">
-            <div id="header-exp-bar" class="h-full bg-cyan-400 transition-all duration-300" style="width: 0%;"></div>
+          <div class="w-full h-2.5 bg-slate-900 border border-cyan-900 rounded-sm overflow-hidden">
+            <div id="header-exp-bar" class="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-300" style="width: 0%;"></div>
           </div>
         </div>
       </div>
+
     </div>
   </header>
 
-  <!-- NAVIGATION TABS -->
+  <!-- NAVIGATION TABS SYSTEM -->
   <nav class="max-w-7xl mx-auto px-4 mt-4 relative z-40">
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 system-panel p-1 rounded">
-      <button onclick="switchTab('analytics')" id="nav-analytics" class="tab-btn px-3 py-2 font-orbitron text-xs font-bold rounded transition-all text-cyan-400 bg-cyan-950 border border-cyan-400 glow-box-cyan">
-        📊 ANALYTICS
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 system-card p-1.5 rounded-sm">
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="tab-btn px-3 py-2.5 font-orbitron text-xs md:text-sm font-bold tracking-wider rounded-sm transition-all text-cyan-400 bg-cyan-950/80 border border-cyan-400/60 glow-box-cyan">
+        📊 ANALYTICS & RIVAL
       </button>
-      <button onclick="switchTab('quests')" id="nav-quests" class="tab-btn px-3 py-2 font-orbitron text-xs font-bold rounded transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800">
-        ⚔️ QUESTS
+      <button onclick="switchTab('quests')" id="nav-quests" class="tab-btn px-3 py-2.5 font-orbitron text-xs md:text-sm font-bold tracking-wider rounded-sm transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60">
+        ⚔️ DAILY QUESTS
       </button>
-      <button onclick="switchTab('uplearn')" id="nav-uplearn" class="tab-btn px-3 py-2 font-orbitron text-xs font-bold rounded transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800">
-        📖 UPLEARN
+      <button onclick="switchTab('uplearn')" id="nav-uplearn" class="tab-btn px-3 py-2.5 font-orbitron text-xs md:text-sm font-bold tracking-wider rounded-sm transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60">
+        📖 UPLEARN HUB
       </button>
-      <button onclick="switchTab('hevy')" id="nav-hevy" class="tab-btn px-3 py-2 font-orbitron text-xs font-bold rounded transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800">
-        🏋️ GYM & AI
+      <button onclick="switchTab('hevy')" id="nav-hevy" class="tab-btn px-3 py-2.5 font-orbitron text-xs md:text-sm font-bold tracking-wider rounded-sm transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60">
+        🏋️ HEVY GYM & AI
       </button>
-      <button onclick="switchTab('shop')" id="nav-shop" class="tab-btn px-3 py-2 font-orbitron text-xs font-bold rounded transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800 col-span-2 md:col-span-1">
-        🛒 SHOP & RIVAL
+      <button onclick="switchTab('shop')" id="nav-shop" class="tab-btn px-3 py-2.5 font-orbitron text-xs md:text-sm font-bold tracking-wider rounded-sm transition-all text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 col-span-2 md:col-span-1">
+        🛒 SYSTEM SHOP
       </button>
     </div>
   </nav>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 mt-6 relative z-30">
+  <!-- MAIN SYSTEM CONTENT PANELS -->
+  <main class="max-w-7xl mx-auto px-4 mt-6 pb-16 relative z-30">
 
-    <!-- TAB 1: ANALYTICS -->
+    <!-- TAB 1: OVERVIEW & ADVANCED ANALYTICS -->
     <section id="tab-analytics" class="tab-content space-y-6">
-      <div class="flex items-center justify-between border-b border-cyan-900 pb-2">
-        <h2 class="font-orbitron font-bold text-sm md:text-base text-cyan-300">📈 PERFORMANCE & METRICS</h2>
-        <button onclick="resetDataConfirmation()" class="px-2.5 py-1 bg-rose-950 text-rose-300 border border-rose-800 rounded text-xs font-orbitron">
-          RESET DATA
-        </button>
-      </div>
 
-      <!-- KPI Grid -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="system-panel p-3 rounded">
-          <div class="text-[9px] font-orbitron text-slate-400 uppercase">LEVEL</div>
-          <div class="font-orbitron font-black text-xl text-cyan-400 mt-1" id="kpi-level">1</div>
+      <!-- Header Action Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-900/60 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300 flex items-center gap-2">
+            <span>📈 DEEP SYSTEM PERFORMANCE & SPIDER RADAR</span>
+          </h2>
+          <p class="text-xs text-slate-400 font-sans">Live head-to-head trajectory tracking against your Ideal Shadow Rival</p>
         </div>
-        <div class="system-panel p-3 rounded">
-          <div class="text-[9px] font-orbitron text-slate-400 uppercase">TODAY XP</div>
-          <div class="font-orbitron font-black text-xl text-emerald-400 mt-1" id="kpi-today-xp">0</div>
-        </div>
-        <div class="system-panel p-3 rounded">
-          <div class="text-[9px] font-orbitron text-slate-400 uppercase">TOTAL XP</div>
-          <div class="font-orbitron font-black text-xl text-cyan-300 mt-1" id="kpi-total-xp">0</div>
-        </div>
-        <div class="system-panel p-3 rounded">
-          <div class="text-[9px] font-orbitron text-slate-400 uppercase">STREAK</div>
-          <div class="font-orbitron font-black text-xl text-amber-400 mt-1"><span id="kpi-streak">0</span> DAYS</div>
-        </div>
-      </div>
-
-      <!-- Radar Chart & Goals -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div class="lg:col-span-6 system-panel p-4 rounded flex flex-col justify-between">
-          <h3 class="font-orbitron font-bold text-xs text-cyan-300 mb-2">ATTRIBUTE RADAR (YOU vs GHOST)</h3>
-          <div class="relative w-full aspect-square max-h-[280px] mx-auto">
-            <canvas id="radarChart"></canvas>
-          </div>
-          <div class="grid grid-cols-3 gap-2 pt-2 text-center font-orbitron text-[10px]">
-            <div class="bg-slate-900 p-1 rounded">IQ: <span id="stat-val-iq" class="text-cyan-400">0</span></div>
-            <div class="bg-slate-900 p-1 rounded">STR: <span id="stat-val-str" class="text-cyan-400">0</span></div>
-            <div class="bg-slate-900 p-1 rounded">DISC: <span id="stat-val-disc" class="text-cyan-400">0</span></div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-6 system-panel p-4 rounded space-y-4 font-orbitron text-xs">
-          <h3 class="font-orbitron font-bold text-xs text-cyan-300">🎯 GOAL PROXIMITY</h3>
-          
-          <div>
-            <div class="flex justify-between mb-1">
-              <span>A* Economics</span>
-              <span class="text-cyan-400"><span id="goal-econ-you">0</span> / 120h</span>
-            </div>
-            <div class="w-full h-2 bg-slate-900 border border-slate-700 rounded relative">
-              <div id="bar-econ-you" class="h-full bg-cyan-400" style="width: 0%;"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between mb-1">
-              <span>A* Sociology</span>
-              <span class="text-cyan-400"><span id="goal-soc-you">0</span> / 120h</span>
-            </div>
-            <div class="w-full h-2 bg-slate-900 border border-slate-700 rounded relative">
-              <div id="bar-soc-you" class="h-full bg-cyan-400" style="width: 0%;"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between mb-1">
-              <span>Distinction* CTEC Business</span>
-              <span class="text-cyan-400"><span id="goal-biz-you">0</span> / 90h</span>
-            </div>
-            <div class="w-full h-2 bg-slate-900 border border-slate-700 rounded relative">
-              <div id="bar-biz-you" class="h-full bg-cyan-400" style="width: 0%;"></div>
-            </div>
-          </div>
-
-          <div class="p-2 bg-purple-950/60 border border-purple-500/40 rounded text-[11px] flex justify-between">
-            <span>RIVAL GAP:</span>
-            <span id="analytics-rival-status-text" class="text-purple-300 font-bold">EQUAL BASELINE</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: QUESTS -->
-    <section id="tab-quests" class="tab-content hidden space-y-4">
-      <div class="flex items-center justify-between border-b border-cyan-900 pb-2 font-orbitron">
-        <h2 class="font-bold text-sm md:text-base text-cyan-300">⚔️ DAILY QUEST DIRECTIVES</h2>
-        <span class="text-xs text-cyan-400">COMPLETED: <span id="quests-completed-count">0</span>/5</span>
-      </div>
-
-      <div class="space-y-2 font-orbitron text-xs">
-        <div class="system-panel p-3 rounded flex items-center justify-between cursor-pointer" onclick="document.getElementById('quest-gym').click()">
-          <div class="flex items-center space-x-3 pointer-events-none">
-            <input type="checkbox" id="quest-gym" onchange="toggleQuest('gym')" class="w-4 h-4 accent-cyan-400">
-            <div>
-              <div class="font-bold text-slate-100">GYM TRAINING SESSION</div>
-              <div class="text-[10px] text-slate-400 font-sans" id="gym-day-description">Loading split...</div>
-            </div>
-          </div>
-          <span class="text-cyan-400 font-bold">+50 XP, +8 Gold, +0.5 STR</span>
-        </div>
-
-        <div class="system-panel p-3 rounded flex items-center justify-between cursor-pointer" onclick="document.getElementById('quest-skin').click()">
-          <div class="flex items-center space-x-3 pointer-events-none">
-            <input type="checkbox" id="quest-skin" onchange="toggleQuest('skin')" class="w-4 h-4 accent-cyan-400">
-            <div class="font-bold text-slate-100">DAILY SKIN CARE STACK</div>
-          </div>
-          <span class="text-cyan-400 font-bold">+30 XP, +4 Gold</span>
-        </div>
-
-        <div class="system-panel p-3 rounded flex items-center justify-between cursor-pointer" onclick="document.getElementById('quest-soc').click()">
-          <div class="flex items-center space-x-3 pointer-events-none">
-            <input type="checkbox" id="quest-soc" onchange="toggleQuest('soc')" class="w-4 h-4 accent-cyan-400">
-            <div class="font-bold text-slate-100">SOCIOLOGY REVISION (1h)</div>
-          </div>
-          <span class="text-cyan-400 font-bold">+40 XP, +8 Gold</span>
-        </div>
-
-        <div class="system-panel p-3 rounded flex items-center justify-between cursor-pointer" onclick="document.getElementById('quest-econ').click()">
-          <div class="flex items-center space-x-3 pointer-events-none">
-            <input type="checkbox" id="quest-econ" onchange="toggleQuest('econ')" class="w-4 h-4 accent-cyan-400">
-            <div class="font-bold text-slate-100">ECONOMICS REVISION (1h)</div>
-          </div>
-          <span class="text-cyan-400 font-bold">+40 XP, +8 Gold</span>
-        </div>
-
-        <div class="system-panel p-3 rounded flex items-center justify-between cursor-pointer" onclick="document.getElementById('quest-food').click()">
-          <div class="flex items-center space-x-3 pointer-events-none">
-            <input type="checkbox" id="quest-food" onchange="toggleQuest('food')" class="w-4 h-4 accent-cyan-400">
-            <div class="font-bold text-slate-100">FOOD & NUTRITION PROTOCOL</div>
-          </div>
-          <span class="text-cyan-400 font-bold">+35 XP, +5 Gold</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: UPLEARN -->
-    <section id="tab-uplearn" class="tab-content hidden space-y-4 font-orbitron">
-      <div class="border-b border-cyan-900 pb-2">
-        <h2 class="font-bold text-sm md:text-base text-cyan-300">📖 UPLEARN STUDY ENGINE</h2>
-        <p class="text-[10px] text-slate-400">Earn 8 Coins per 1 hour of study</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="system-panel p-4 rounded text-center space-y-4">
-          <div id="stopwatch-display" class="font-black text-4xl text-cyan-400 glow-text-cyan my-2">00:00:00</div>
-          <select id="study-subject-select" class="bg-slate-900 border border-cyan-500 text-cyan-300 p-2 rounded text-xs w-full">
-            <option value="Economics">A* Economics</option>
-            <option value="Sociology">A* Sociology</option>
-            <option value="Business">CTEC Business</option>
-          </select>
-          <div class="flex gap-2 justify-center text-xs">
-            <button id="btn-timer-start" onclick="toggleTimer()" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded">START</button>
-            <button id="btn-timer-stop" onclick="stopAndLogTimer()" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded" disabled>STOP & LOG</button>
-          </div>
-        </div>
-
-        <div class="system-panel p-4 rounded space-y-3 text-xs">
-          <div class="font-bold text-cyan-300">MANUAL REVISION LOG</div>
-          <select id="manual-subject" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-200">
-            <option value="Economics">Economics A*</option>
-            <option value="Sociology">Sociology A*</option>
-            <option value="Business">CTEC Business D*</option>
-          </select>
-          <input type="number" id="manual-hours" step="0.25" min="0.25" placeholder="Hours (e.g. 1)" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-200">
-          <button onclick="logManualHours()" class="w-full py-2 bg-cyan-950 border border-cyan-500 text-cyan-300 font-bold rounded">
-            + LOG HOURS (+8 COINS/HR)
+        <div class="flex items-center space-x-2 font-orbitron text-xs">
+          <span class="px-3 py-1 bg-cyan-950 text-cyan-400 border border-cyan-500/40 rounded-sm">LIVE SYNC</span>
+          <button onclick="resetDataConfirmation()" class="px-3 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-700/60 rounded-sm transition-colors">
+            🔄 RESET ALL TO ZERO
           </button>
         </div>
       </div>
+
+      <!-- Top KPI Overview Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="system-card p-4 rounded-sm">
+          <div class="text-[10px] font-orbitron font-semibold tracking-wider text-slate-400 uppercase">HUNTER LEVEL</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <span class="font-orbitron font-black text-2xl md:text-3xl text-cyan-400 glow-cyan" id="kpi-level">1</span>
+            <span class="font-orbitron text-xs text-slate-400 font-bold" id="kpi-rank">E-Rank</span>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-slate-500">Absolute Zero Baseline</div>
+        </div>
+
+        <div class="system-card p-4 rounded-sm">
+          <div class="text-[10px] font-orbitron font-semibold tracking-wider text-slate-400 uppercase">TODAY XP</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <span class="font-orbitron font-black text-2xl md:text-3xl text-emerald-400" id="kpi-today-xp">0</span>
+            <span class="text-xs text-emerald-500 font-mono">+0 vs Yesterday</span>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-slate-500">Calculated from quests & study</div>
+        </div>
+
+        <div class="system-card p-4 rounded-sm">
+          <div class="text-[10px] font-orbitron font-semibold tracking-wider text-slate-400 uppercase">TOTAL XP</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <span class="font-orbitron font-black text-2xl md:text-3xl text-cyan-300" id="kpi-total-xp">0</span>
+            <span class="text-xs text-cyan-500 font-mono">Cumulative</span>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-slate-500">No mock history pre-filled</div>
+        </div>
+
+        <div class="system-card p-4 rounded-sm">
+          <div class="text-[10px] font-orbitron font-semibold tracking-wider text-slate-400 uppercase">ACTIVE STREAK</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <span class="font-orbitron font-black text-2xl md:text-3xl text-amber-400" id="kpi-streak">0</span>
+            <span class="text-xs text-amber-500 font-mono">DAYS</span>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-slate-500">Best Streak: <span id="kpi-best-streak" class="text-amber-300 font-bold">0</span> d</div>
+        </div>
+      </div>
+
+      <!-- MIDDLE ROW: Hexagonal Stat Wheel Radar Chart & Goal Distance Engine -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 7 Columns: Pokémon / RPG Style Radar Stat Wheel -->
+        <div class="lg:col-span-7 system-card p-5 rounded-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="font-orbitron font-bold text-sm text-cyan-300">ATTRIBUTE RADAR WHEEL (YOU vs GHOST)</h3>
+              <p class="text-xs text-slate-400 font-sans">IQ, Strength, Discipline, Endurance, Focus & Consistency</p>
+            </div>
+            <div class="flex items-center space-x-3 text-xs font-orbitron">
+              <div class="flex items-center space-x-1.5">
+                <span class="w-3 h-3 bg-cyan-400 rounded-full inline-block glow-cyan"></span>
+                <span class="text-cyan-300 font-bold">YOU</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="w-3 h-3 bg-purple-500 rounded-full inline-block glow-ghost"></span>
+                <span class="text-purple-300 font-bold">GHOST</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Radar Canvas -->
+          <div class="relative w-full aspect-square max-h-[320px] mx-auto my-2 flex items-center justify-center">
+            <canvas id="radarChart"></canvas>
+          </div>
+
+          <!-- Stat Numerical Values Grid -->
+          <div class="grid grid-cols-3 md:grid-cols-6 gap-2 pt-3 border-t border-slate-800 text-center font-orbitron text-xs">
+            <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">IQ (INT)</div>
+              <div class="font-bold text-cyan-400" id="stat-val-iq">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">STR (GYM)</div>
+              <div class="font-bold text-cyan-400" id="stat-val-str">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">DISCIPLINE</div>
+              <div class="font-bold text-cyan-400" id="stat-val-disc">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">ENDURANCE</div>
+              <div class="font-bold text-cyan-400" id="stat-val-end">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">FOCUS</div>
+              <div class="font-bold text-cyan-400" id="stat-val-foc">0.0</div>
+            </div>
+            <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <div class="text-[9px] text-slate-400">CONSISTENCY</div>
+              <div class="font-bold text-cyan-400" id="stat-val-con">0.0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Columns: Goal Horizon Proximity Gauges -->
+        <div class="lg:col-span-5 system-card p-5 rounded-sm space-y-5">
+          <div>
+            <h3 class="font-orbitron font-bold text-sm text-cyan-300">🎯 GOAL PROXIMITY & SYSTEM HORIZON</h3>
+            <p class="text-xs text-slate-400 font-sans">Distance to target objectives initialized from zero</p>
+          </div>
+
+          <!-- Academic Horizon Progress Bars -->
+          <div class="space-y-4 font-orbitron">
+            <div class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-1 flex justify-between">
+              <span>ACADEMIC TARGET HORIZON</span>
+              <span class="text-cyan-400 text-[10px]">A* / DISTINCTION*</span>
+            </div>
+
+            <!-- Economics A* -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300">A* Economics (Study Hours)</span>
+                <span class="text-cyan-400 font-mono"><span id="goal-econ-you">0.0</span> / 120 hrs</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-900 border border-slate-700 rounded-sm relative overflow-hidden">
+                <div id="bar-econ-you" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%;"></div>
+                <div id="bar-econ-ghost" class="h-full bg-purple-500/60 absolute top-0 left-0 transition-all duration-500" style="width: 0%; z-index: 1;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                <span>Ghost Target: <span id="ghost-econ-pct" class="text-purple-400 font-bold">0%</span></span>
+                <span>You: <span id="you-econ-pct" class="text-cyan-400 font-bold">0%</span></span>
+              </div>
+            </div>
+
+            <!-- Sociology A* -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300">A* Sociology (Study Hours)</span>
+                <span class="text-cyan-400 font-mono"><span id="goal-soc-you">0.0</span> / 120 hrs</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-900 border border-slate-700 rounded-sm relative overflow-hidden">
+                <div id="bar-soc-you" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%;"></div>
+                <div id="bar-soc-ghost" class="h-full bg-purple-500/60 absolute top-0 left-0 transition-all duration-500" style="width: 0%; z-index: 1;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                <span>Ghost Target: <span id="ghost-soc-pct" class="text-purple-400 font-bold">0%</span></span>
+                <span>You: <span id="you-soc-pct" class="text-cyan-400 font-bold">0%</span></span>
+              </div>
+            </div>
+
+            <!-- CTEC Business D* -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300">Distinction* CTEC Business</span>
+                <span class="text-cyan-400 font-mono"><span id="goal-biz-you">0.0</span> / 90 hrs</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-900 border border-slate-700 rounded-sm relative overflow-hidden">
+                <div id="bar-biz-you" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%;"></div>
+                <div id="bar-biz-ghost" class="h-full bg-purple-500/60 absolute top-0 left-0 transition-all duration-500" style="width: 0%; z-index: 1;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                <span>Ghost Target: <span id="ghost-biz-pct" class="text-purple-400 font-bold">0%</span></span>
+                <span>You: <span id="you-biz-pct" class="text-cyan-400 font-bold">0%</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Physical Metrics Preloads -->
+          <div class="space-y-3 font-orbitron pt-2">
+            <div class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-1 flex justify-between">
+              <span>PHYSICAL METRICS MATRIX</span>
+              <span class="text-emerald-400 text-[10px]">PRELOADED BASELINE</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="bg-slate-900/90 p-3 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-400">MEASURED HEIGHT</div>
+                <div class="font-extrabold text-cyan-300 text-sm mt-0.5">5'8.5"</div>
+                <div class="text-[9px] text-emerald-400 mt-1">Target Ceiling: 5'10"+</div>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-400">BODYWEIGHT</div>
+                <div class="font-extrabold text-cyan-300 text-sm mt-0.5">58.5 KG</div>
+                <div class="text-[9px] text-emerald-400 mt-1">Bulk Target: 65 - 72 KG</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Gap Banner -->
+          <div id="analytics-rival-status-box" class="p-3 bg-purple-950/50 border border-purple-500/40 rounded-sm text-xs font-orbitron flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
+              <span class="text-purple-200">SHADOW RIVAL: <span id="analytics-rival-status-text" class="text-purple-400 font-bold">EQUAL BASELINE</span></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400" id="analytics-gap-hours">0.0h gap</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: Weekly Activity Curve & Daily Consistency Check Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- Weekly Chart (7 cols) -->
+        <div class="md:col-span-7 system-card p-4 rounded-sm">
+          <h3 class="font-orbitron font-bold text-sm text-cyan-300 mb-3">WEEKLY REVISION & XP ACTIVITY CURVE</h3>
+          <div class="h-48 w-full">
+            <canvas id="weeklyActivityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 7-Day Matrix (5 cols) -->
+        <div class="md:col-span-5 system-card p-4 rounded-sm flex flex-col justify-between">
+          <div>
+            <h3 class="font-orbitron font-bold text-sm text-cyan-300 mb-1">7-DAY CONSISTENCY MATRIX</h3>
+            <p class="text-xs text-slate-400 font-sans mb-4">Daily directive check-off status</p>
+            
+            <div class="grid grid-cols-7 gap-2 text-center font-orbitron">
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">MON</div>
+                <div id="check-day-0" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">TUE</div>
+                <div id="check-day-1" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">WED</div>
+                <div id="check-day-2" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">THU</div>
+                <div id="check-day-3" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">FRI</div>
+                <div id="check-day-4" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">SAT</div>
+                <div id="check-day-5" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-1">SUN</div>
+                <div id="check-day-6" class="w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold">✕</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-2.5 bg-slate-900/80 border border-slate-800 rounded text-xs text-slate-400 flex justify-between items-center">
+            <span>Weekly Completion Rate:</span>
+            <span id="weekly-completion-rate" class="font-orbitron font-bold text-cyan-400">0%</span>
+          </div>
+        </div>
+      </div>
+
     </section>
 
-    <!-- TAB 4: GYM & AI -->
-    <section id="tab-hevy" class="tab-content hidden space-y-4 font-orbitron">
-      <div class="border-b border-cyan-900 pb-2">
-        <h2 class="font-bold text-sm md:text-base text-cyan-300">🏋️ GYM & AI TRAINER</h2>
-      </div>
-
-      <div class="system-panel p-4 rounded space-y-3">
-        <div class="text-xs text-cyan-400 font-bold" id="gym-day-tag">TODAY GYM SPLIT</div>
-        <div class="text-xs text-slate-300" id="gym-day-description">Loading...</div>[cite: 6]
-        <button onclick="logTodayWorkout()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded">
-          COMPLETE & LOG GYM SESSION (+8 COINS, +0.5 STR)
-        </button>
-      </div>
-
-      <div class="system-panel p-4 rounded space-y-3 text-xs">
-        <div class="font-bold text-cyan-300">GEMINI AI TRAINER</div>
-        <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-200">
-        <button onclick="saveApiKey()" class="px-3 py-1.5 bg-slate-800 text-slate-200 rounded font-bold">SAVE KEY</button>
-        <div id="ai-response-box" class="h-28 bg-slate-950 border border-slate-800 p-2 rounded font-mono text-[11px] overflow-y-auto">[AI READY]</div>
-        <div class="flex gap-2">
-          <input type="text" id="ai-prompt-input" placeholder="Ask AI..." class="flex-1 bg-slate-900 border border-slate-700 p-2 rounded text-slate-200">
-          <button onclick="sendAiQuery()" class="px-4 py-2 bg-cyan-600 text-slate-950 font-bold rounded">SEND</button>
+    <!-- TAB 2: DAILY QUEST DIRECTIVES -->
+    <section id="tab-quests" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/60 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">⚔️ DAILY QUEST DIRECTIVES</h2>
+          <p class="text-xs text-slate-400 font-sans">Strictly limited to core physical and academic protocols</p>
+        </div>
+        <div class="font-orbitron text-xs text-cyan-400 font-bold bg-cyan-950/80 px-3 py-1 border border-cyan-500/40 rounded">
+          COMPLETED: <span id="quests-completed-count">0</span> / 5
         </div>
       </div>
+
+      <!-- Quests Checklist Grid -->
+      <div class="space-y-3 font-orbitron">
+        
+        <!-- Gym Directives -->
+        <div class="system-card p-4 rounded-sm flex items-center justify-between hover:border-cyan-400/60 transition-all cursor-pointer" onclick="handleQuestCardClick('gym')">
+          <div class="flex items-center space-x-4">
+            <input type="checkbox" id="quest-gym" onchange="toggleQuest('gym')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100 flex items-center space-x-2">
+                <span>GYM TRAINING SESSION</span>
+                <span id="gym-day-tag" class="text-[10px] px-2 py-0.5 bg-slate-800 text-cyan-300 rounded font-mono">TODAY SPLIT</span>
+              </div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5" id="gym-day-description">
+                Loading today's targeted workout...
+              </div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+50 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+8 GOLD</span>
+            <span class="text-emerald-400 font-bold ml-2">+0.5 STR</span>
+          </div>
+        </div>
+
+        <!-- Skin Care Stack -->
+        <div class="system-card p-4 rounded-sm flex items-center justify-between hover:border-cyan-400/60 transition-all cursor-pointer" onclick="handleQuestCardClick('skin')">
+          <div class="flex items-center space-x-4">
+            <input type="checkbox" id="quest-skin" onchange="toggleQuest('skin')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">DAILY SKIN CARE STACK</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">
+                CeraVe Cleanser + Simple Moisturiser + SPF 30 + Vaseline lash curl
+              </div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+30 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+4 GOLD</span>
+          </div>
+        </div>
+
+        <!-- Sociology Revision -->
+        <div class="system-card p-4 rounded-sm flex items-center justify-between hover:border-cyan-400/60 transition-all cursor-pointer" onclick="handleQuestCardClick('soc')">
+          <div class="flex items-center space-x-4">
+            <input type="checkbox" id="quest-soc" onchange="toggleQuest('soc')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">SOCIOLOGY REVISION BLOCK</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">
+                Minimum 1 hour active recall / blurt technique towards A* Target
+              </div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+40 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+8 GOLD</span>
+          </div>
+        </div>
+
+        <!-- Economics Revision -->
+        <div class="system-card p-4 rounded-sm flex items-center justify-between hover:border-cyan-400/60 transition-all cursor-pointer" onclick="handleQuestCardClick('econ')">
+          <div class="flex items-center space-x-4">
+            <input type="checkbox" id="quest-econ" onchange="toggleQuest('econ')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">ECONOMICS REVISION BLOCK</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">
+                Minimum 1 hour UpLearn / essay framework practice towards A* Target
+              </div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+40 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+8 GOLD</span>
+          </div>
+        </div>
+
+        <!-- Food & Nutrition -->
+        <div class="system-card p-4 rounded-sm flex items-center justify-between hover:border-cyan-400/60 transition-all cursor-pointer" onclick="handleQuestCardClick('food')">
+          <div class="flex items-center space-x-4">
+            <input type="checkbox" id="quest-food" onchange="toggleQuest('food')" class="w-5 h-5 accent-cyan-400 rounded">
+            <div>
+              <div class="font-bold text-slate-100">FOOD & NUTRITION PROTOCOL</div>
+              <div class="text-xs text-slate-400 font-sans mt-0.5">
+                Hit daily protein target (PSN Soy Isolate / Shake) + daily supplement stack
+              </div>
+            </div>
+          </div>
+          <div class="text-right text-xs">
+            <span class="text-cyan-400 font-bold">+35 XP</span>
+            <span class="text-amber-400 font-bold ml-2">+5 GOLD</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Penalty Banner -->
+      <div class="p-4 bg-rose-950/40 border border-rose-500/50 rounded-sm font-orbitron flex items-start space-x-3">
+        <svg class="w-6 h-6 text-rose-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+          <div class="font-bold text-rose-300 text-sm">SYSTEM SLACK PENALTY WARNING</div>
+          <p class="text-xs text-slate-300 font-sans mt-1">
+            Failing to complete daily quest directives before midnight causes your Shadow Rival to pull ahead by <span class="text-purple-400 font-bold">+1.5 levels</span> and deducts <span class="text-rose-400 font-bold">-10 Gold</span>.
+          </p>
+        </div>
+      </div>
+
     </section>
 
-    <!-- TAB 5: SHOP & RIVAL -->
-    <section id="tab-shop" class="tab-content hidden space-y-4 font-orbitron">
-      <div class="border-b border-cyan-900 pb-2 flex justify-between items-center">
-        <h2 class="font-bold text-sm md:text-base text-cyan-300">🛒 SYSTEM SHOP & RIVAL</h2>
-        <span class="text-amber-400 font-bold text-xs"><span id="shop-gold-display">0</span> GOLD</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div class="system-panel p-3 rounded flex flex-col justify-between space-y-2">
-          <div><div class="font-bold text-cyan-400">REST PASS</div><div class="text-[10px] text-slate-400">Exempts missed quest penalty.</div></div>
-          <button onclick="buyShopItem('Rest Pass', 40)" class="w-full py-1.5 bg-amber-500/20 border border-amber-500 text-amber-300 rounded font-bold">BUY (40G)</button>
+    <!-- TAB 3: UPLEARN STUDY HUB -->
+    <section id="tab-uplearn" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/60 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">📖 UPLEARN STUDY ENGINE</h2>
+          <p class="text-xs text-slate-400 font-sans">Earn 8 Coins & scaling XP for every 1 hour of recorded focus time</p>
         </div>
-        <div class="system-panel p-3 rounded flex flex-col justify-between space-y-2">
-          <div><div class="font-bold text-cyan-400">XP BOOST (2X)</div><div class="text-[10px] text-slate-400">Doubles study XP for 24h.</div></div>
-          <button onclick="buyShopItem('XP Multiplier', 60)" class="w-full py-1.5 bg-amber-500/20 border border-amber-500 text-amber-300 rounded font-bold">BUY (60G)</button>
-        </div>
-        <div class="system-panel p-3 rounded flex flex-col justify-between space-y-2">
-          <div><div class="font-bold text-cyan-400">STAT BOOST (+2)</div><div class="text-[10px] text-slate-400">Adds +2.0 to stats.</div></div>
-          <button onclick="buyShopItem('Stat Boost', 80)" class="w-full py-1.5 bg-amber-500/20 border border-amber-500 text-amber-300 rounded font-bold">BUY (80G)</button>
+        <div class="font-orbitron text-xs text-amber-400 font-bold bg-amber-950/80 px-3 py-1 border border-amber-500/40 rounded">
+          RATE: 8 COINS / 1.0 HOUR
         </div>
       </div>
 
-      <div class="system-panel system-panel-ghost p-4 rounded space-y-2 text-xs">
-        <div class="font-bold text-purple-300">👻 SHADOW RIVAL STATUS</div>
-        <div class="grid grid-cols-2 gap-2 text-purple-200">
-          <div>Rival Level: <span id="ghost-level-display" class="font-bold">L1</span></div>
-          <div>Rival Hours: <span id="ghost-hours-display" class="font-bold">0.0h</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- Active Timer -->
+        <div class="md:col-span-7 system-card p-6 rounded-sm text-center flex flex-col justify-between space-y-6">
+          <div>
+            <span class="text-xs font-orbitron font-semibold text-slate-400 uppercase tracking-widest">ACTIVE REVISION STOPWATCH</span>
+            
+            <div id="stopwatch-display" class="font-orbitron font-black text-5xl md:text-6xl text-cyan-400 glow-cyan my-6 tracking-wider">
+              00:00:00
+            </div>
+
+            <div class="flex justify-center space-x-3 text-xs font-orbitron">
+              <select id="study-subject-select" class="bg-slate-900 border border-cyan-500/50 text-cyan-300 px-3 py-2 rounded focus:outline-none">
+                <option value="Economics">A* Economics (UpLearn)</option>
+                <option value="Sociology">A* Sociology (Active Recall)</option>
+                <option value="Business">Distinction* CTEC Business</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex justify-center space-x-4 font-orbitron text-xs">
+            <button id="btn-timer-start" onclick="toggleTimer()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-sm glow-box-cyan transition-all">
+              ▶ START REVISION
+            </button>
+            <button id="btn-timer-stop" onclick="stopAndLogTimer()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-sm transition-all" disabled>
+              💾 STOP & LOG HOURS
+            </button>
+          </div>
+        </div>
+
+        <!-- Manual Hours Logger -->
+        <div class="md:col-span-5 system-card p-5 rounded-sm space-y-4">
+          <h3 class="font-orbitron font-bold text-sm text-cyan-300">⚡ QUICK MANUAL REVISION LOG</h3>
+          
+          <div class="space-y-3 text-xs font-orbitron">
+            <div>
+              <label class="text-slate-400 block mb-1">Select Subject</label>
+              <select id="manual-subject" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded">
+                <option value="Economics">Economics A*</option>
+                <option value="Sociology">Sociology A*</option>
+                <option value="Business">CTEC Business D*</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-slate-400 block mb-1">Hours Completed</label>
+              <input type="number" id="manual-hours" step="0.25" min="0.25" placeholder="e.g. 1.5" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded">
+            </div>
+
+            <button onclick="logManualHours()" class="w-full py-2.5 bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 font-bold rounded transition-all">
+              + LOG REVISION HOURS (+8 COINS/HR)
+            </button>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 space-y-2 font-orbitron text-xs">
+            <div class="text-slate-400 font-bold text-[11px]">SUBJECT ACCUMULATED HOURS</div>
+            <div class="flex justify-between bg-slate-900/80 p-2 rounded">
+              <span>Economics:</span>
+              <span id="tot-hrs-econ" class="text-cyan-400 font-bold">0.0 hrs</span>
+            </div>
+            <div class="flex justify-between bg-slate-900/80 p-2 rounded">
+              <span>Sociology:</span>
+              <span id="tot-hrs-soc" class="text-cyan-400 font-bold">0.0 hrs</span>
+            </div>
+            <div class="flex justify-between bg-slate-900/80 p-2 rounded">
+              <span>CTEC Business:</span>
+              <span id="tot-hrs-biz" class="text-cyan-400 font-bold">0.0 hrs</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 4: HEVY GYM & AI MATRIX -->
+    <section id="tab-hevy" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/60 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">🏋️ HEVY WORKOUT & AI EVALUATOR</h2>
+          <p class="text-xs text-slate-400 font-sans">6-Day Split with preloaded +0.5 Strength rewards per completed session</p>
+        </div>
+        <div class="font-orbitron text-xs text-emerald-400 font-bold bg-emerald-950/80 px-3 py-1 border border-emerald-500/40 rounded">
+          REWARD: +8 COINS & +0.5 STR / SESSION
         </div>
       </div>
+
+      <!-- Gym Weekly Schedule Cards -->
+      <div class="system-card p-5 rounded-sm space-y-4">
+        <h3 class="font-orbitron font-bold text-sm text-cyan-300">📅 PRELOADED WEEKLY GYM SCHEDULE</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-2 text-xs font-orbitron">
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">MON: PUSH & ARMS</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Chest, Shoulders, Biceps (1), Abs</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">TUE: PULL & ARMS</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Back (Lats/Traps), Triceps (1), Abs</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">WED: ARMS & HANG</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Biceps (2), Lateral Delts, Abs, Dead Hangs</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">THU: CHEST & BACK</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Chest, Back Thickness, Triceps (2), Abs</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">FRI: LEGS & ABS</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Legs (Football Power), Abs</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded">
+            <div class="text-cyan-400 font-bold text-[11px]">SAT: PUMP & UPPER</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Biceps (3), Shoulder Width, Upper Chest, Abs</div>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700 p-2.5 rounded opacity-75">
+            <div class="text-amber-400 font-bold text-[11px]">SUN: TOTAL REST</div>
+            <div class="text-[10px] text-slate-400 font-sans mt-1">Sleep 10 hours for growth</div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-wrap gap-3 items-center justify-between">
+          <button onclick="logTodayWorkout()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 font-orbitron font-bold text-xs text-white rounded glow-box-cyan transition-all">
+            🏋️ COMPLETE & LOG TODAY'S GYM SESSION (+8 COINS, +0.5 STR)
+          </button>
+          <span class="text-xs text-slate-400 font-orbitron">
+            Sessions Logged: <span id="hevy-completed-count" class="text-cyan-400 font-bold">0</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Gemini AI Integration Box -->
+      <div class="system-card p-5 rounded-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-orbitron font-bold text-sm text-cyan-300">🤖 GEMINI AI TRAINER & PHOTO EVALUATOR</h3>
+          <span class="text-[10px] font-orbitron bg-cyan-950 text-cyan-400 border border-cyan-600/40 px-2 py-0.5 rounded">
+            GEMINI 2.5 FLASH API
+          </span>
+        </div>
+
+        <div class="text-xs font-orbitron space-y-1">
+          <label class="text-slate-400 block">Gemini API Key (Stored locally in browser):</label>
+          <div class="flex gap-2">
+            <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded">
+            <button onclick="saveApiKey()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">
+              SAVE KEY
+            </button>
+          </div>
+        </div>
+
+        <div id="ai-response-box" class="h-40 bg-slate-950/90 border border-slate-800 rounded p-3 text-xs font-mono text-slate-300 overflow-y-auto whitespace-pre-wrap">
+          [SYSTEM AI READY] Ask me to review your workout split or attach a photo of your workout notes/logs for real-time analysis.
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input type="text" id="ai-prompt-input" placeholder="Ask AI Trainer a question..." class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 p-2 rounded text-xs">
+          
+          <input type="file" id="ai-image-input" accept="image/*" class="hidden" onchange="handleImageSelected(event)">
+          <button onclick="document.getElementById('ai-image-input').click()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-orbitron flex items-center gap-1 justify-center">
+            📷 <span id="image-label">ATTACH PHOTO</span>
+          </button>
+
+          <button onclick="sendAiQuery()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-orbitron font-bold text-xs rounded">
+            SEND TO AI
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 5: SYSTEM SHOP & RIVAL -->
+    <section id="tab-shop" class="tab-content hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-cyan-900/60 pb-3">
+        <div>
+          <h2 class="font-orbitron font-extrabold text-lg text-cyan-300">🛒 SYSTEM SHOP & RIVAL STATUS</h2>
+          <p class="text-xs text-slate-400 font-sans">Exchange Gold coins for System Rewards & inspect Shadow Rival metrics</p>
+        </div>
+        <div class="font-orbitron text-xs text-amber-400 font-bold bg-amber-950/80 px-3 py-1 border border-amber-500/40 rounded">
+          GOLD: <span id="shop-gold-display">0</span> PTS
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-orbitron">
+        <div class="system-card p-4 rounded-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-cyan-400 font-bold">REWARD: REST DAY PASS</div>
+            <p class="text-xs text-slate-400 font-sans mt-1">Exempts 1 day of missed quests without incurring a streak reset.</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="text-amber-400 text-sm font-bold">40 GOLD</span>
+            <button onclick="buyShopItem('Rest Pass', 40)" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs rounded">
+              BUY
+            </button>
+          </div>
+        </div>
+
+        <div class="system-card p-4 rounded-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-cyan-400 font-bold">REWARD: XP BOOST (2X)</div>
+            <p class="text-xs text-slate-400 font-sans mt-1">Doubles all XP earned from study blocks for the next 24 hours.</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="text-amber-400 text-sm font-bold">60 GOLD</span>
+            <button onclick="buyShopItem('XP Multiplier', 60)" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs rounded">
+              BUY
+            </button>
+          </div>
+        </div>
+
+        <div class="system-card p-4 rounded-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-cyan-400 font-bold">REWARD: STAT BOOST (+2.0)</div>
+            <p class="text-xs text-slate-400 font-sans mt-1">Instantly grants +2.0 attribute points to your Spider Radar Wheel.</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="text-amber-400 text-sm font-bold">80 GOLD</span>
+            <button onclick="buyShopItem('Stat Boost', 80)" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500 text-amber-300 text-xs rounded">
+              BUY
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="system-card system-card-ghost p-5 rounded-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-purple-500/30 pb-2">
+          <h3 class="font-orbitron font-bold text-sm text-purple-300">👻 SHADOW RIVAL (IDEAL SELF MIRROR)</h3>
+          <span class="text-xs font-orbitron text-purple-400 font-bold">EQUAL BASELINE START</span>
+        </div>
+
+        <p class="text-xs text-slate-300 font-sans">
+          The Shadow Rival represents your ideal self who never slacks off. He executes flawless daily study blocks toward A* in Economics, A* in Sociology, Distinction* in CTEC Business, and gym consistency.
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-orbitron">
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">RIVAL LEVEL</div>
+            <div class="text-lg font-bold text-purple-300" id="ghost-level-display">L1</div>
+          </div>
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">RIVAL REVISION</div>
+            <div class="text-lg font-bold text-purple-300" id="ghost-hours-display">0.0 hrs</div>
+          </div>
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">RIVAL GYM SESSIONS</div>
+            <div class="text-lg font-bold text-purple-300" id="ghost-gym-display">0</div>
+          </div>
+          <div class="bg-purple-950/80 p-3 rounded border border-purple-800/60">
+            <div class="text-[10px] text-slate-400">CURRENT GAP</div>
+            <div class="text-lg font-bold text-rose-400" id="ghost-gap-display">EQUAL</div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </main>
 
+  <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
     const DEFAULT_DATA = {
-      level: 1, rank: "E-Rank", xp: 0, gold: 0, streak: 0, bestStreak: 0,
-      econHours: 0, socHours: 0, bizHours: 0,
-      stats: { iq: 0, str: 0, disc: 0 },
-      ghost: { level: 1, econHours: 0, socHours: 0, bizHours: 0, gymSessions: 0 },
+      level: 1, rank: "E-Rank Hunter", xp: 0, gold: 0, streak: 0, bestStreak: 0,
+      econHours: 0.0, socHours: 0.0, bizHours: 0.0,
+      stats: { iq: 0.0, str: 0.0, disc: 0.0, end: 0.0, foc: 0.0, con: 0.0 },
+      ghost: {
+        level: 1, econHours: 0.0, socHours: 0.0, bizHours: 0.0, gymSessions: 0,
+        stats: { iq: 0.0, str: 0.0, disc: 0.0, end: 0.0, foc: 0.0, con: 0.0 }
+      },
       quests: { gym: false, skin: false, soc: false, econ: false, food: false },
       gymSessionsCount: 0,
-      weeklyXp: [0,0,0,0,0,0,0]
+      weeklyXp: [0, 0, 0, 0, 0, 0, 0],
+      weeklyChecks: [false, false, false, false, false, false, false]
     };
 
-    let appData = JSON.parse(localStorage.getItem('SYSTEM_HUD_V3_2')) || JSON.parse(JSON.stringify(DEFAULT_DATA));
-    let stopwatchInterval = null, stopwatchSeconds = 0, radarChartInstance = null;
+    let appData = JSON.parse(localStorage.getItem('SYSTEM_HUD_V4_DATA')) || JSON.parse(JSON.stringify(DEFAULT_DATA));
+    let stopwatchInterval = null;
+    let stopwatchSeconds = 0;
+    let selectedImageBase64 = null;
+    let radarChartInstance = null;
+    let activityChartInstance = null;
 
     const GYM_SCHEDULE = [
-      { day: "MON", title: "PUSH & ARMS", desc: "Chest, Shoulders, Biceps (1), Abs" },[cite: 6]
-      { day: "TUE", title: "PULL & ARMS", desc: "Back (Lats/Traps), Triceps (1), Abs" },[cite: 6]
-      { day: "WED", title: "ARMS & DEEP HANGS", desc: "Biceps (2), Lateral Delts, Abs, Dead Hangs" },[cite: 6]
-      { day: "THU", title: "CHEST & BACK", desc: "Chest, Back (Traps/Thickness), Triceps (2), Abs" },[cite: 6]
-      { day: "FRI", title: "LEGS & FOOTBALL POWER", desc: "Legs (Football Power), Abs" },[cite: 6]
-      { day: "SAT", title: "PUMP & UPPER CHEST", desc: "Biceps (3), Shoulder Width, Upper Chest (Pump), Abs" },[cite: 6]
-      { day: "SUN", title: "TOTAL REST & GROWTH", desc: "Total Rest (Sleep 10 hours for growth)" }[cite: 6]
+      { day: "MON", title: "PUSH & ARMS", desc: "Chest, Shoulders, Biceps (1), Abs" },
+      { day: "TUE", title: "PULL & ARMS", desc: "Back (Lats/Traps), Triceps (1), Abs" },
+      { day: "WED", title: "ARMS & DEEP HANGS", desc: "Biceps (2), Lateral Delts, Abs, Dead Hangs" },
+      { day: "THU", title: "CHEST & BACK", desc: "Chest, Back (Traps/Thickness), Triceps (2), Abs" },
+      { day: "FRI", title: "LEGS & FOOTBALL POWER", desc: "Legs (Football Power), Abs" },
+      { day: "SAT", title: "PUMP & UPPER CHEST", desc: "Biceps (3), Shoulder Width, Upper Chest (Pump), Abs" },
+      { day: "SUN", title: "TOTAL REST & GROWTH", desc: "Total Rest (Sleep 10 hours for growth)" }
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
       const storedKey = localStorage.getItem('GEMINI_API_KEY');
       if (storedKey) document.getElementById('gemini-api-key').value = storedKey;
+
       updateTodayGymScheduleText();
+      simulateGhostGrowth();
       saveAndRefreshUI();
       initCharts();
     });
 
     function saveAndRefreshUI() {
-      localStorage.setItem('SYSTEM_HUD_V3_2', JSON.stringify(appData));
+      localStorage.setItem('SYSTEM_HUD_V4_DATA', JSON.stringify(appData));
+
       document.getElementById('header-level').innerText = `L${appData.level}`;
       document.getElementById('header-rank-badge').innerText = appData.rank;
       document.getElementById('header-gold').innerText = Math.floor(appData.gold);
 
-      const cap = appData.level * 100;
-      const curXp = appData.xp % cap;
-      document.getElementById('header-exp-num').innerText = `${Math.floor(curXp)}/${cap}`;
-      document.getElementById('header-exp-bar').style.width = `${Math.min(100, (curXp/cap)*100)}%`;
+      const currentLevelCap = appData.level * 100;
+      const currentLevelXp = appData.xp % currentLevelCap;
+      document.getElementById('header-exp-num').innerText = `${Math.floor(currentLevelXp)} / ${currentLevelCap}`;
+      const xpPct = Math.min(100, (currentLevelXp / currentLevelCap) * 100);
+      document.getElementById('header-exp-bar').style.width = `${xpPct}%`;
 
       document.getElementById('kpi-level').innerText = appData.level;
-      document.getElementById('kpi-today-xp').innerText = Math.floor(appData.weeklyXp[6] || 0);
+      document.getElementById('kpi-rank').innerText = appData.rank;
+      document.getElementById('kpi-today-xp').innerText = Math.floor(appData.weeklyXp[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1] || 0);
       document.getElementById('kpi-total-xp').innerText = Math.floor(appData.xp);
       document.getElementById('kpi-streak').innerText = appData.streak;
+      document.getElementById('kpi-best-streak').innerText = appData.bestStreak;
 
       document.getElementById('stat-val-iq').innerText = appData.stats.iq.toFixed(1);
       document.getElementById('stat-val-str').innerText = appData.stats.str.toFixed(1);
       document.getElementById('stat-val-disc').innerText = appData.stats.disc.toFixed(1);
+      document.getElementById('stat-val-end').innerText = appData.stats.end.toFixed(1);
+      document.getElementById('stat-val-foc').innerText = appData.stats.foc.toFixed(1);
+      document.getElementById('stat-val-con').innerText = appData.stats.con.toFixed(1);
 
-      document.getElementById('goal-econ-you').innerText = appData.econHours.toFixed(1);
-      document.getElementById('goal-soc-you').innerText = appData.socHours.toFixed(1);
-      document.getElementById('goal-biz-you').innerText = appData.bizHours.toFixed(1);
+      const totEcon = appData.econHours;
+      const totSoc = appData.socHours;
+      const totBiz = appData.bizHours;
 
-      document.getElementById('bar-econ-you').style.width = `${Math.min(100, (appData.econHours/120)*100)}%`;
-      document.getElementById('bar-soc-you').style.width = `${Math.min(100, (appData.socHours/120)*100)}%`;
-      document.getElementById('bar-biz-you').style.width = `${Math.min(100, (appData.bizHours/90)*100)}%`;
+      document.getElementById('goal-econ-you').innerText = totEcon.toFixed(1);
+      document.getElementById('goal-soc-you').innerText = totSoc.toFixed(1);
+      document.getElementById('goal-biz-you').innerText = totBiz.toFixed(1);
+
+      document.getElementById('tot-hrs-econ').innerText = `${totEcon.toFixed(1)} hrs`;
+      document.getElementById('tot-hrs-soc').innerText = `${totSoc.toFixed(1)} hrs`;
+      document.getElementById('tot-hrs-biz').innerText = `${totBiz.toFixed(1)} hrs`;
+
+      const youEconPct = Math.min(100, (totEcon / 120) * 100);
+      const ghostEconPct = Math.min(100, (appData.ghost.econHours / 120) * 100);
+      document.getElementById('bar-econ-you').style.width = `${youEconPct}%`;
+      document.getElementById('bar-econ-ghost').style.width = `${ghostEconPct}%`;
+      document.getElementById('you-econ-pct').innerText = `${youEconPct.toFixed(0)}%`;
+      document.getElementById('ghost-econ-pct').innerText = `${ghostEconPct.toFixed(0)}%`;
+
+      const youSocPct = Math.min(100, (totSoc / 120) * 100);
+      const ghostSocPct = Math.min(100, (appData.ghost.socHours / 120) * 100);
+      document.getElementById('bar-soc-you').style.width = `${youSocPct}%`;
+      document.getElementById('bar-soc-ghost').style.width = `${ghostSocPct}%`;
+      document.getElementById('you-soc-pct').innerText = `${youSocPct.toFixed(0)}%`;
+      document.getElementById('ghost-soc-pct').innerText = `${ghostSocPct.toFixed(0)}%`;
+
+      const youBizPct = Math.min(100, (totBiz / 90) * 100);
+      const ghostBizPct = Math.min(100, (appData.ghost.bizHours / 90) * 100);
+      document.getElementById('bar-biz-you').style.width = `${youBizPct}%`;
+      document.getElementById('bar-biz-ghost').style.width = `${ghostBizPct}%`;
+      document.getElementById('you-biz-pct').innerText = `${youBizPct.toFixed(0)}%`;
+      document.getElementById('ghost-biz-pct').innerText = `${ghostBizPct.toFixed(0)}%`;
 
       document.getElementById('quest-gym').checked = appData.quests.gym;
       document.getElementById('quest-skin').checked = appData.quests.skin;
@@ -418,10 +978,57 @@
       document.getElementById('quest-econ').checked = appData.quests.econ;
       document.getElementById('quest-food').checked = appData.quests.food;
 
-      const completed = Object.values(appData.quests).filter(Boolean).length;
-      document.getElementById('quests-completed-count').innerText = completed;
+      const completedQuests = Object.values(appData.quests).filter(Boolean).length;
+      document.getElementById('quests-completed-count').innerText = completedQuests;
+
+      document.getElementById('hevy-completed-count').innerText = appData.gymSessionsCount;
       document.getElementById('shop-gold-display').innerText = Math.floor(appData.gold);
-      document.getElementById('hevy-completed-count')?.innerText = appData.gymSessionsCount;
+
+      const totalYouHours = totEcon + totSoc + totBiz;
+      const totalGhostHours = appData.ghost.econHours + appData.ghost.socHours + appData.ghost.bizHours;
+      const hourGap = totalGhostHours - totalYouHours;
+
+      document.getElementById('ghost-level-display').innerText = `L${appData.ghost.level}`;
+      document.getElementById('ghost-hours-display').innerText = `${totalGhostHours.toFixed(1)} hrs`;
+      document.getElementById('ghost-gym-display').innerText = appData.ghost.gymSessions;
+      
+      const statusText = document.getElementById('analytics-rival-status-text');
+      const gapText = document.getElementById('analytics-gap-hours');
+      const ghostGapDisplay = document.getElementById('ghost-gap-display');
+
+      if (hourGap <= 0) {
+        statusText.innerText = "SURPASSED GHOST";
+        statusText.className = "text-emerald-400 font-bold";
+        gapText.innerText = `+${Math.abs(hourGap).toFixed(1)}h ahead`;
+        ghostGapDisplay.innerText = "BEATEN";
+        ghostGapDisplay.className = "text-emerald-400 text-lg font-bold";
+      } else if (hourGap < 3) {
+        statusText.innerText = "NECK AND NECK";
+        statusText.className = "text-amber-400 font-bold";
+        gapText.innerText = `${hourGap.toFixed(1)}h behind`;
+        ghostGapDisplay.innerText = `-${hourGap.toFixed(1)}h`;
+        ghostGapDisplay.className = "text-amber-400 text-lg font-bold";
+      } else {
+        statusText.innerText = "GHOST PULLING AHEAD";
+        statusText.className = "text-rose-400 font-bold";
+        gapText.innerText = `-${hourGap.toFixed(1)}h behind`;
+        ghostGapDisplay.innerText = `-${hourGap.toFixed(1)}h`;
+        ghostGapDisplay.className = "text-rose-400 text-lg font-bold";
+      }
+
+      let completedDays = 0;
+      for (let i = 0; i < 7; i++) {
+        const el = document.getElementById(`check-day-${i}`);
+        if (appData.weeklyChecks[i]) {
+          el.className = "w-full aspect-square rounded bg-emerald-950/80 border border-emerald-500 text-emerald-300 flex items-center justify-center text-xs font-bold glow-box-cyan";
+          el.innerText = "✓";
+          completedDays++;
+        } else {
+          el.className = "w-full aspect-square rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold";
+          el.innerText = "✕";
+        }
+      }
+      document.getElementById('weekly-completion-rate').innerText = `${Math.round((completedDays / 7) * 100)}%`;
 
       if (radarChartInstance) updateCharts();
     }
@@ -429,76 +1036,99 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('text-cyan-400', 'bg-cyan-950', 'border', 'border-cyan-400', 'glow-box-cyan');
+        btn.classList.remove('text-cyan-400', 'bg-cyan-950/80', 'border', 'border-cyan-400/60', 'glow-box-cyan');
         btn.classList.add('text-slate-400');
       });
+
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`nav-${tabId}`);
-      activeBtn.classList.add('text-cyan-400', 'bg-cyan-950', 'border', 'border-cyan-400', 'glow-box-cyan');
+      activeBtn.classList.add('text-cyan-400', 'bg-cyan-950/80', 'border', 'border-cyan-400/60', 'glow-box-cyan');
       activeBtn.classList.remove('text-slate-400');
     }
 
     function toggleTimer() {
       const startBtn = document.getElementById('btn-timer-start');
       const stopBtn = document.getElementById('btn-timer-stop');
+
       if (!stopwatchInterval) {
         stopwatchInterval = setInterval(() => {
           stopwatchSeconds++;
-          const h = String(Math.floor(stopwatchSeconds/3600)).padStart(2,'0');
-          const m = String(Math.floor((stopwatchSeconds%3600)/60)).padStart(2,'0');
-          const s = String(stopwatchSeconds%60).padStart(2,'0');
-          document.getElementById('stopwatch-display').innerText = `${h}:${m}:${s}`;
+          const hrs = String(Math.floor(stopwatchSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((stopwatchSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(stopwatchSeconds % 60).padStart(2, '0');
+          document.getElementById('stopwatch-display').innerText = `${hrs}:${mins}:${secs}`;
         }, 1000);
-        startBtn.innerText = "PAUSE";
+
+        startBtn.innerText = "⏸ PAUSE TIMER";
+        startBtn.classList.replace('bg-cyan-500', 'bg-amber-600');
         stopBtn.disabled = false;
       } else {
         clearInterval(stopwatchInterval);
         stopwatchInterval = null;
-        startBtn.innerText = "START";
+        startBtn.innerText = "▶ RESUME REVISION";
+        startBtn.classList.replace('bg-amber-600', 'bg-cyan-500');
       }
     }
 
     function stopAndLogTimer() {
-      if (stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }
-      const hours = stopwatchSeconds / 3600;
-      if (hours > 0.01) {
+      if (stopwatchInterval) {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+      }
+      const hoursEarned = stopwatchSeconds / 3600;
+      if (hoursEarned > 0.01) {
         const subject = document.getElementById('study-subject-select').value;
-        addStudyHours(subject, hours);
+        addStudyHours(subject, hoursEarned);
       }
       stopwatchSeconds = 0;
       document.getElementById('stopwatch-display').innerText = "00:00:00";
-      document.getElementById('btn-timer-start').innerText = "START";
+      document.getElementById('btn-timer-start').innerText = "▶ START REVISION";
+      document.getElementById('btn-timer-start').classList.replace('bg-amber-600', 'bg-cyan-500');
       document.getElementById('btn-timer-stop').disabled = true;
     }
 
     function logManualHours() {
       const subject = document.getElementById('manual-subject').value;
       const hours = parseFloat(document.getElementById('manual-hours').value);
-      if (isNaN(hours) || hours <= 0) return alert("Enter valid hours.");
+      if (isNaN(hours) || hours <= 0) {
+        alert("Please enter a valid number of hours.");
+        return;
+      }
       addStudyHours(subject, hours);
       document.getElementById('manual-hours').value = "";
     }
 
     function addStudyHours(subject, hours) {
-      appData.gold += hours * 8;
-      appData.xp += hours * 30;
+      const goldEarned = hours * 8;
+      const xpEarned = hours * 30;
+
+      appData.gold += goldEarned;
+      appData.xp += xpEarned;
+
       if (subject === 'Economics') appData.econHours += hours;
       else if (subject === 'Sociology') appData.socHours += hours;
       else if (subject === 'Business') appData.bizHours += hours;
 
-      appData.stats.iq += hours * 0.8;
+      appData.stats.iq = Math.min(100, appData.stats.iq + hours * 0.8);
+      appData.stats.foc = Math.min(100, appData.stats.foc + hours * 0.6);
+      appData.stats.end = Math.min(100, appData.stats.end + hours * 0.5);
+
+      checkLevelUp();
       saveAndRefreshUI();
-      alert(`Logged ${hours.toFixed(2)}h in ${subject}! +${(hours*8).toFixed(1)} Gold`);
+      alert(`LOGGED ${hours.toFixed(2)}h IN ${subject.toUpperCase()}!\n+${goldEarned.toFixed(1)} Gold Coins\n+${xpEarned.toFixed(0)} XP`);
     }
 
     function logTodayWorkout() {
       appData.gymSessionsCount++;
       appData.gold += 8;
-      appData.stats.str += 0.5;
+      appData.stats.str = Math.min(100, appData.stats.str + 0.5);
+      appData.stats.disc = Math.min(100, appData.stats.disc + 0.5);
       appData.quests.gym = true;
       appData.xp += 50;
+
+      checkLevelUp();
       saveAndRefreshUI();
-      alert("Gym logged! +8 Gold, +0.5 STR");
+      alert("GYM SESSION LOGGED!\n+8 Gold Coins\n+0.5 Strength Attribute\nDaily Gym Quest Completed!");
     }
 
     function updateTodayGymScheduleText() {
@@ -506,74 +1136,212 @@
       const mapIdx = dayIdx === 0 ? 6 : dayIdx - 1;
       const today = GYM_SCHEDULE[mapIdx];
       document.getElementById('gym-day-tag').innerText = `TODAY (${today.day})`;
-      document.getElementById('gym-day-description').innerText = `${today.title}: ${today.desc}`;[cite: 6]
+      document.getElementById('gym-day-description').innerText = `${today.title}: ${today.desc}`;
     }
 
-    function toggleQuest(key) {
-      appData.quests[key] = document.getElementById(`quest-${key}`).checked;
-      if (appData.quests[key]) {
-        appData.gold += 5;
-        appData.xp += 30;
+    function handleQuestCardClick(questKey) {
+      const cb = document.getElementById(`quest-${questKey}`);
+      cb.checked = !cb.checked;
+      toggleQuest(questKey);
+    }
+
+    function toggleQuest(questKey) {
+      const isChecked = document.getElementById(`quest-${questKey}`).checked;
+      appData.quests[questKey] = isChecked;
+
+      if (isChecked) {
+        if (questKey === 'gym') { appData.gold += 8; appData.xp += 50; appData.stats.str += 0.5; }
+        if (questKey === 'skin') { appData.gold += 4; appData.xp += 30; }
+        if (questKey === 'soc') { appData.gold += 8; appData.xp += 40; appData.stats.iq += 0.4; }
+        if (questKey === 'econ') { appData.gold += 8; appData.xp += 40; appData.stats.iq += 0.4; }
+        if (questKey === 'food') { appData.gold += 5; appData.xp += 35; }
       }
+
+      const completed = Object.values(appData.quests).filter(Boolean).length;
+      const dayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+      appData.weeklyChecks[dayIdx] = completed >= 3;
+      appData.stats.con = Math.min(100, (completed / 5) * 100);
+
+      checkLevelUp();
       saveAndRefreshUI();
+    }
+
+    function simulateGhostGrowth() {
+      const daysPassed = Math.max(1, Math.floor(appData.xp / 150));
+      appData.ghost.econHours = Math.max(appData.ghost.econHours, daysPassed * 1.8);
+      appData.ghost.socHours = Math.max(appData.ghost.socHours, daysPassed * 1.8);
+      appData.ghost.bizHours = Math.max(appData.ghost.bizHours, daysPassed * 1.2);
+      appData.ghost.gymSessions = Math.max(appData.ghost.gymSessions, Math.floor(daysPassed * 0.85));
+
+      appData.ghost.stats.iq = Math.min(100, (appData.ghost.econHours + appData.ghost.socHours) * 0.4);
+      appData.ghost.stats.str = Math.min(100, appData.ghost.gymSessions * 0.8);
+      appData.ghost.stats.disc = Math.min(100, daysPassed * 8.0);
+      appData.ghost.stats.end = Math.min(100, daysPassed * 7.5);
+      appData.ghost.stats.foc = Math.min(100, daysPassed * 8.5);
+      appData.ghost.stats.con = 95.0;
+      appData.ghost.level = Math.max(1, Math.floor((appData.ghost.econHours + appData.ghost.socHours + appData.ghost.bizHours) / 3));
+    }
+
+    function checkLevelUp() {
+      const nextLevelCap = appData.level * 100;
+      if (appData.xp >= nextLevelCap) {
+        appData.level++;
+        if (appData.level >= 10) appData.rank = "S-Rank Monarch";
+        else if (appData.level >= 7) appData.rank = "A-Rank Hunter";
+        else if (appData.level >= 5) appData.rank = "B-Rank Hunter";
+        else if (appData.level >= 3) appData.rank = "C-Rank Hunter";
+        else if (appData.level >= 2) appData.rank = "D-Rank Hunter";
+        alert(`🎉 LEVEL UP! YOU ARE NOW LEVEL ${appData.level} (${appData.rank})!`);
+      }
     }
 
     function buyShopItem(name, cost) {
-      if (appData.gold < cost) return alert("Not enough gold!");
+      if (appData.gold < cost) {
+        alert("INSUFFICIENT GOLD BALANCE!");
+        return;
+      }
       appData.gold -= cost;
-      if (name === 'Stat Boost') appData.stats.iq += 2;
+      if (name === 'Stat Boost') {
+        appData.stats.iq += 2.0;
+        appData.stats.str += 2.0;
+      }
       saveAndRefreshUI();
-      alert(`Purchased ${name}!`);
+      alert(`PURCHASED ${name.toUpperCase()} FOR ${cost} GOLD!`);
     }
 
     function resetDataConfirmation() {
-      if (confirm("Reset all data to zero?")) {
+      if (confirm("Reset all metrics to absolute zero? This cannot be undone.")) {
         appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
         saveAndRefreshUI();
       }
     }
 
     function saveApiKey() {
-      localStorage.setItem('GEMINI_API_KEY', document.getElementById('gemini-api-key').value.trim());
-      alert("API Key saved.");
+      const key = document.getElementById('gemini-api-key').value.trim();
+      localStorage.setItem('GEMINI_API_KEY', key);
+      alert("Gemini API key saved locally.");
+    }
+
+    function handleImageSelected(evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedImageBase64 = e.target.result.split(',')[1];
+        document.getElementById('image-label').innerText = "PHOTO ATTACHED ✓";
+      };
+      reader.readAsDataURL(file);
     }
 
     async function sendAiQuery() {
       const apiKey = document.getElementById('gemini-api-key').value.trim() || localStorage.getItem('GEMINI_API_KEY');
-      const prompt = document.getElementById('ai-prompt-input').value.trim();
-      const box = document.getElementById('ai-response-box');
-      if (!apiKey || !prompt) return alert("Enter API Key and prompt.");
-      box.innerText = "Thinking...";
+      const promptText = document.getElementById('ai-prompt-input').value.trim();
+      const responseBox = document.getElementById('ai-response-box');
+
+      if (!apiKey) {
+        alert("Please enter a Gemini API Key first.");
+        return;
+      }
+      if (!promptText && !selectedImageBase64) {
+        alert("Please enter a message or attach an image.");
+        return;
+      }
+
+      responseBox.innerText = "[SYSTEM AI THINKING...]";
+
+      const requestBody = { contents: [{ parts: [] }] };
+      if (promptText) {
+        requestBody.contents[0].parts.push({ text: `User Context: Height 5'8.5", Weight 58.5kg. Goals: A* Economics, A* Sociology, Distinction* CTEC Business. User Prompt: ${promptText}` });
+      }
+      if (selectedImageBase64) {
+        requestBody.contents[0].parts.push({ inline_data: { mime_type: "image/jpeg", data: selectedImageBase64 } });
+      }
+
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          body: JSON.stringify(requestBody)
         });
         const data = await res.json();
-        box.innerText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response.";
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+          responseBox.innerText = `[SYSTEM AI RESPONSE]\n\n${data.candidates[0].content.parts[0].text}`;
+        } else {
+          responseBox.innerText = "[SYSTEM AI ERROR] Invalid response format.";
+        }
       } catch (err) {
-        box.innerText = `Error: ${err.message}`;
+        responseBox.innerText = `[SYSTEM AI ERROR] ${err.message}`;
       }
+
+      selectedImageBase64 = null;
+      document.getElementById('image-label').innerText = "ATTACH PHOTO";
+      document.getElementById('ai-prompt-input').value = "";
     }
 
     function initCharts() {
-      const ctx = document.getElementById('radarChart').getContext('2d');
-      radarChartInstance = new Chart(ctx, {
+      const radarCtx = document.getElementById('radarChart').getContext('2d');
+      radarChartInstance = new Chart(radarCtx, {
         type: 'radar',
         data: {
-          labels: ['IQ', 'STR', 'DISC'],
+          labels: ['IQ (INT)', 'STRENGTH', 'DISCIPLINE', 'ENDURANCE', 'FOCUS', 'CONSISTENCY'],
+          datasets: [
+            {
+              label: 'YOU (LIVE)',
+              data: [appData.stats.iq, appData.stats.str, appData.stats.disc, appData.stats.end, appData.stats.foc, appData.stats.con],
+              backgroundColor: 'rgba(0, 240, 255, 0.25)',
+              borderColor: '#00f0ff',
+              borderWidth: 2,
+              pointBackgroundColor: '#00f0ff'
+            },
+            {
+              label: 'GHOST RIVAL',
+              data: [appData.ghost.stats.iq, appData.ghost.stats.str, appData.ghost.stats.disc, appData.ghost.stats.end, appData.ghost.stats.foc, appData.ghost.stats.con],
+              backgroundColor: 'rgba(168, 85, 247, 0.2)',
+              borderColor: '#a855f7',
+              borderWidth: 2,
+              borderDash: [4, 4],
+              pointBackgroundColor: '#a855f7'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(0, 240, 255, 0.2)' },
+              grid: { color: 'rgba(0, 240, 255, 0.15)' },
+              pointLabels: { color: '#94a3b8', font: { family: 'Orbitron', size: 10, weight: 'bold' } },
+              ticks: { display: false, beginAtZero: true, max: 100 }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      const activityCtx = document.getElementById('weeklyActivityChart').getContext('2d');
+      activityChartInstance = new Chart(activityCtx, {
+        type: 'line',
+        data: {
+          labels: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
           datasets: [{
-            label: 'YOU',
-            data: [appData.stats.iq, appData.stats.str, appData.stats.disc],
-            backgroundColor: 'rgba(0, 240, 255, 0.25)',
+            label: 'Daily XP',
+            data: appData.weeklyXp,
             borderColor: '#00f0ff',
-            borderWidth: 2
+            backgroundColor: 'rgba(0, 240, 255, 0.1)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            pointBackgroundColor: '#00f0ff'
           }]
         },
         options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: { r: { ticks: { display: false }, grid: { color: 'rgba(0, 240, 255, 0.2)' } } },
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'Orbitron', size: 10 } } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'Orbitron', size: 10 } } }
+          },
           plugins: { legend: { display: false } }
         }
       });
@@ -581,8 +1349,19 @@
 
     function updateCharts() {
       if (!radarChartInstance) return;
-      radarChartInstance.data.datasets[0].data = [appData.stats.iq, appData.stats.str, appData.stats.disc];
+
+      radarChartInstance.data.datasets[0].data = [
+        appData.stats.iq, appData.stats.str, appData.stats.disc,
+        appData.stats.end, appData.stats.foc, appData.stats.con
+      ];
+      radarChartInstance.data.datasets[1].data = [
+        appData.ghost.stats.iq, appData.ghost.stats.str, appData.ghost.stats.disc,
+        appData.ghost.stats.end, appData.ghost.stats.foc, appData.ghost.stats.con
+      ];
       radarChartInstance.update();
+
+      activityChartInstance.data.datasets[0].data = appData.weeklyXp;
+      activityChartInstance.update();
     }
   </script>
 </body>
