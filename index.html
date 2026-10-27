@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SYSTEM HUD - SOLO LEVELING</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+        body { font-family: 'Rajdhani', sans-serif; background-color: #030712; color: #f3f4f6; overflow-x: hidden; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+        .glow-red { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+        .system-border { border: 1px solid rgba(59, 130, 246, 0.4); }
+        .system-panel { background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [level, setLevel] = useState(1);
+            const [xp, setXp] = useState(140);
+            const [maxXp] = useState(500);
+            const [gold, setGold] = useState(45);
+            const [rank, setRank] = useState("E-RANK HUNTER");
+            const [hp, setHp] = useState(100);
+            const [activeTab, setActiveTab] = useState("dashboard");
+            const [shiftActive, setShiftActive] = useState(false);
+            const [timerSeconds, setTimerSeconds] = useState(1500);
+            const [timerRunning, setTimerRunning] = useState(false);
+            const [brainDumps, setBrainDumps] = useState([
+                { id: 1, text: "Check UCAS Hub portal for reference updates", converted: false },
+                { id: 2, text: "Buy soy protein isolate & magnesium", converted: true }
+            ]);
+            const [newDump, setNewDump] = useState("");
+            const [penaltyTriggered, setPenaltyTriggered] = useState(false);
+
+            const [stats, setStats] = useState({ str: 14, agi: 12, int: 16, vit: 13, dis: 15 });
+            const [statPoints, setStatPoints] = useState(3);
+
+            const [quests, setQuests] = useState([
+                { id: 1, title: "Intense Revision Chamber: 2x 50m Active Recall Blocks", category: "study", xp: 120, gold: 15, completed: false },
+                { id: 2, title: "Gym PPL Protocol: Push / Pull / Legs Split Session", category: "gym", xp: 100, gold: 10, completed: false },
+                { id: 3, title: "UCAS Application Set-Up & Personal Statement (December Deadline)", category: "ucas", xp: 150, gold: 20, completed: false },
+                { id: 4, title: "Degree Apprenticeship Portal Review & Tracking", category: "jobs", xp: 90, gold: 10, completed: false }
+            ]);
+
+            useEffect(() => {
+                let interval = null;
+                if (timerRunning && timerSeconds > 0) {
+                    interval = setInterval(() => setTimerSeconds(s => s - 1), 1000);
+                } else if (timerSeconds === 0) {
+                    setTimerRunning(false);
+                    alert("WARNING: Study Block Complete. System XP Awarded.");
+                    addXp(100, 10);
+                }
+                return () => clearInterval(interval);
+            }, [timerRunning, timerSeconds]);
+
+            const addXp = (amount, goldEarned) => {
+                let newXp = xp + amount;
+                let newLevel = level;
+                let newGold = gold + goldEarned;
+                if (newXp >= maxXp) {
+                    newXp -= maxXp;
+                    newLevel += 1;
+                    setStatPoints(p => p + 3);
+                    alert("LEVEL UP! Stat Points Available.");
+                    if (newLevel >= 5) setRank("D-RANK HUNTER");
+                    if (newLevel >= 10) setRank("C-RANK HUNTER");
+                }
+                setXp(newXp);
+                setLevel(newLevel);
+                setGold(newGold);
+            };
+
+            const toggleQuest = (id) => {
+                setQuests(quests.map(q => {
+                    if (q.id === id) {
+                        const nextState = !q.completed;
+                        if (nextState) addXp(q.xp, q.gold);
+                        else {
+                            setXp(Math.max(0, xp - q.xp));
+                            setGold(Math.max(0, gold - q.gold));
+                        }
+                        return { ...q, completed: nextState };
+                    }
+                    return q;
+                }));
+            };
+
+            const addBrainDump = (e) => {
+                e.preventDefault();
+                if (!newDump.trim()) return;
+                setBrainDumps([{ id: Date.now(), text: newDump, converted: false }, ...brainDumps]);
+                setNewDump("");
+            };
+
+            const convertToQuest = (id, text) => {
+                setBrainDumps(brainDumps.map(d => d.id === id ? { ...d, converted: true } : d));
+                setQuests([...quests, { id: Date.now(), title: text, category: "ucas", xp: 80, gold: 10, completed: false }]);
+            };
+
+            const triggerPenalty = () => {
+                setPenaltyTriggered(true);
+                setHp(h => Math.max(10, h - 30));
+            };
+
+            return (
+                <div className="max-w-md mx-auto min-h-screen pb-24 px-3 pt-4 bg-gray-950 text-gray-100 relative font-sans">
+                    
+                    {penaltyTriggered && (
+                        <div className="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-6 text-center">
+                            <div className="text-red-500 font-orbitron font-black text-2xl mb-2">⚠️ SYSTEM PENALTY ZONE ⚠️</div>
+                            <p className="text-gray-300 mb-6 text-xs leading-relaxed">Daily mandatory directives failed. Disciplinary protocols enacted: 100 Burpees or £15 Financial Forfeiture.</p>
+                            <button onClick={() => setPenaltyTriggered(false)} className="bg-red-600 hover:bg-red-500 text-white font-orbitron font-bold py-3 px-6 rounded-lg w-full max-w-xs shadow-lg text-xs">
+                                ACKNOWLEDGE PENALTY & RESUME
+                            </button>
+                        </div>
+                    )}
+
+                    <header className="system-panel system-border rounded-xl p-4 mb-4 glow-blue relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-blue-600/20 text-blue-400 text-[10px] font-orbitron px-2.5 py-1 rounded-bl border-l border-b border-blue-500/40 font-bold">
+                            {rank}
+                        </div>
+                        <div className="flex justify-between items-center mb-3">
+                            <div>
+                                <h1 className="font-orbitron font-black text-base text-blue-400 tracking-wider">SYSTEM COMMAND</h1>
+                                <p className="text-[11px] text-gray-400">SUBJECT: LEVEL {level} APPRENTICE</p>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-xs text-yellow-400 font-bold font-orbitron">🪙 {gold} GOLD</div>
+                                <div className="text-[10px] text-gray-400">Work Shift: <span className={shiftActive ? "text-green-400 font-bold" : "text-gray-500"}>{shiftActive ? "ACTIVE (£8/h)" : "OFF"}</span></div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 text-xs">
+                            <div>
+                                <div className="flex justify-between text-[10px] text-gray-400 mb-0.5 font-orbitron">
+                                    <span>HP (VITALITY)</span>
+                                    <span>{hp}/100</span>
+                                </div>
+                                <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden border border-red-900/50">
+                                    <div className="bg-red-600 h-full transition-all duration-300" style={{ width: `${hp}%` }}></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="flex justify-between text-[10px] text-gray-400 mb-0.5 font-orbitron">
+                                    <span>XP PROGRESS</span>
+                                    <span>{xp} / {maxXp}</span>
+                                </div>
+                                <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden border border-blue-900/50">
+                                    <div className="bg-blue-500 h-full transition-all duration-300" style={{ width: `${(xp/maxXp)*100}%` }}></div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="flex gap-2 mb-4">
+                        <button onClick={() => setShiftActive(!shiftActive)} className={`flex-1 py-2 text-xs font-orbitron font-bold rounded-lg border transition ${shiftActive ? 'bg-green-950/60 border-green-500 text-green-300' : 'bg-gray-900 border-gray-700 text-gray-400'}`}>
+                            {shiftActive ? '🟢 WORK SHIFT ACTIVE' : '⚪ TOGGLE WORK SHIFT'}
+                        </button>
+                        <button onClick={triggerPenalty} className="px-3 py-2 text-[10px] font-orbitron font-bold rounded-lg bg-red-950/60 border border-red-600 text-red-400 hover:bg-red-900/60">
+                            TEST PENALTY
+                        </button>
+                    </div>
+
+                    {activeTab === "dashboard" && (
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h2 className="font-orbitron font-bold text-xs text-blue-400 tracking-wider">DAILY MANDATORY DIRECTIVES</h2>
+                                <span className="text-[10px] text-red-400 animate-pulse font-orbitron">DEADLINE: 23:59</span>
+                            </div>
+
+                            <div className="space-y-2.5">
+                                {quests.map(q => (
+                                    <div key={q.id} onClick={() => toggleQuest(q.id)} className={`p-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between ${q.completed ? 'bg-gray-900/40 border-gray-800 opacity-60' : 'system-panel system-border hover:border-blue-500'}`}>
+                                        <div className="flex items-center space-x-3">
+                                            <div className={`w-5 h-5 rounded flex items-center justify-center border font-bold text-xs ${q.completed ? 'bg-blue-600 border-blue-500 text-white' : 'border-gray-600 bg-gray-900 text-transparent'}`}>
+                                                ✓
+                                            </div>
+                                            <div>
+                                                <p className={`text-xs font-semibold ${q.completed ? 'line-through text-gray-500' : 'text-gray-200'}`}>{q.title}</p>
+                                                <div className="flex gap-2 mt-1">
+                                                    <span className="text-[10px] text-blue-400 font-orbitron">+{q.xp} XP</span>
+                                                    <span className="text-[10px] text-yellow-400 font-orbitron">+{q.gold} GOLD</span>
+                                                    <span className="text-[10px] uppercase text-gray-500 font-orbitron">[{q.category}]</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="bg-red-950/40 border border-red-600/60 rounded-xl p-4 mt-6 glow-red">
+                                <h3 className="font-orbitron font-bold text-xs text-red-400 mb-2">🚨 PRIORITY DEADLINE: DECEMBER 2026</h3>
+                                <p className="text-xs text-gray-300 mb-2">UCAS Application & Personal Statement submission must be fully locked in before December.</p>
+                                <div className="w-full bg-red-900/30 border border-red-600/40 rounded-lg p-2 text-center text-[11px] text-red-300 font-orbitron font-bold">
+                                    SUNDAY REST DAY APPLIED TO GYM PROTOCOL
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "study" && (
+                        <div className="space-y-4">
+                            <h2 className="font-orbitron font-bold text-xs text-blue-400 tracking-wider">INTENSE REVISION CHAMBER (E TO A*)</h2>
+                            <div className="system-panel system-border rounded-xl p-6 text-center glow-blue">
+                                <div className="font-orbitron text-3xl font-black text-blue-400 mb-2">
+                                    {Math.floor(timerSeconds / 60)}:{String(timerSeconds % 60).padStart(2, '0')}
+                                </div>
+                                <p className="text-xs text-gray-400 mb-6">Active Recall / Past Paper Exam Simulation Block</p>
+                                <div className="flex gap-3 justify-center">
+                                    <button onClick={() => setTimerRunning(!timerRunning)} className={`py-2 px-6 rounded-lg font-orbitron font-bold text-xs ${timerRunning ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'}`}>
+                                        {timerRunning ? 'PAUSE BLOCK' : 'START REVISION'}
+                                    </button>
+                                    <button onClick={() => { setTimerRunning(false); setTimerSeconds(1500); }} className="py-2 px-4 rounded-lg bg-gray-800 text-gray-300 text-xs border border-gray-700 font-orbitron">
+                                        RESET
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "vault" && (
+                        <div className="space-y-4">
+                            <h2 className="font-orbitron font-bold text-xs text-blue-400 tracking-wider">SHADOW EXTRACTION VAULT (BRAIN DUMP)</h2>
+                            <form onSubmit={addBrainDump} className="flex gap-2">
+                                <input type="text" value={newDump} onChange={(e) => setNewDump(e.target.value)} placeholder="Dump anxious thoughts or tasks here..." className="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-blue-500" />
+                                <button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white text-xs px-4 rounded-xl font-orbitron font-bold">STORE</button>
+                            </form>
+
+                            <div className="space-y-2">
+                                {brainDumps.map(d => (
+                                    <div key={d.id} className="system-panel system-border rounded-xl p-3 flex items-center justify-between">
+                                        <span className={`text-xs ${d.converted ? 'line-through text-gray-500' : 'text-gray-300'}`}>{d.text}</span>
+                                        {!d.converted && (
+                                            <button onClick={() => convertToQuest(d.id, d.text)} className="bg-blue-950 border border-blue-600 text-blue-400 text-[10px] px-2.5 py-1 rounded-lg hover:bg-blue-900 font-orbitron font-bold">
+                                                CONVERT
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "stats" && (
+                        <div className="space-y-4">
+                            <h2 className="font-orbitron font-bold text-xs text-blue-400 tracking-wider">HUNTER ATTRIBUTES & REWARDS</h2>
+                            <div className="system-panel system-border rounded-xl p-4 space-y-3">
+                                <div className="flex justify-between items-center text-xs">
+                                    <span className="text-gray-400 font-orbitron">AVAILABLE STAT POINTS:</span>
+                                    <span className="font-bold text-yellow-400 text-sm font-orbitron">{statPoints} PTS</span>
+                                </div>
+                                {Object.entries(stats).map(([key, val]) => (
+                                    <div key={key} className="flex justify-between items-center bg-gray-900/60 p-2.5 rounded-lg border border-gray-800">
+                                        <span className="uppercase text-xs text-blue-400 font-orbitron font-bold">{key}</span>
+                                        <div className="flex items-center space-x-3">
+                                            <span className="font-bold text-sm">{val}</span>
+                                            {statPoints > 0 && (
+                                                <button onClick={() => { setStatPoints(p => p - 1); setStats({...stats, [key]: val + 1}); }} className="bg-blue-600 hover:bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs">+</button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-gray-950/95 border-t border-gray-800 p-3 flex justify-around items-center backdrop-blur z-40">
+                        <button onClick={() => setActiveTab("dashboard")} className={`text-xs font-orbitron ${activeTab === 'dashboard' ? 'text-blue-400 font-bold' : 'text-gray-500'}`}>QUESTS</button>
+                        <button onClick={() => setActiveTab("study")} className={`text-xs font-orbitron ${activeTab === 'study' ? 'text-blue-400 font-bold' : 'text-gray-500'}`}>STUDY</button>
+                        <button onClick={() => setActiveTab("vault")} className={`text-xs font-orbitron ${activeTab === 'vault' ? 'text-blue-400 font-bold' : 'text-gray-500'}`}>VAULT</button>
+                        <button onClick={() => setActiveTab("stats")} className={`text-xs font-orbitron ${activeTab === 'stats' ? 'text-blue-400 font-bold' : 'text-gray-500'}`}>STATS</button>
+                    </nav>
+
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
