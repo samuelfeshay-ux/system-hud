@@ -2,672 +2,1025 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SYSTEM HUD - SOLO LEVELING</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo Leveling System HUD v3.0 Ultimate</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- React & Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@500;600;700&display=swap');
-        
-        body { 
-            font-family: 'Rajdhani', sans-serif; 
-            background-color: #030712; 
-            color: #f3f4f6; 
-            overflow-x: hidden; 
-            user-select: none;
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        
-        /* Sci-fi Glows & Animations */
-        .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.35); }
-        .glow-blue { box-shadow: 0 0 25px rgba(59, 130, 246, 0.4); }
-        .glow-red { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
-        .text-glow-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.7); }
-        .text-glow-red { text-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+        }
 
-        /* Custom Sci-fi Panels */
-        .system-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(3, 7, 18, 0.95) 100%);
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+
+        /* Sci-Fi Glow Utility Classes */
+        .cyan-glow {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.75), 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+        .red-glow {
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+        .gold-glow {
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.8);
+        }
+        .panel-border {
             border: 1px solid rgba(6, 182, 212, 0.3);
-            position: relative;
-            clip-path: polygon(
-                0 10px, 10px 0, 
-                calc(100% - 10px) 0, 100% 10px, 
-                100% calc(100% - 10px), calc(100% - 10px) 100%, 
-                10px 100%, 0 calc(100% - 10px)
-            );
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.08) inset;
         }
-
-        .system-card-gold {
-            background: linear-gradient(135deg, rgba(30, 25, 10, 0.9) 0%, rgba(3, 7, 18, 0.95) 100%);
-            border: 1px solid rgba(234, 179, 8, 0.4);
-            clip-path: polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
-        }
-
-        .system-card-red {
-            background: linear-gradient(135deg, rgba(30, 10, 10, 0.9) 0%, rgba(3, 7, 18, 0.95) 100%);
+        .panel-border-danger {
             border: 1px solid rgba(239, 68, 68, 0.4);
-            clip-path: polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1) inset;
         }
 
-        /* Pulse Animations */
-        @keyframes pulse-cyan {
-            0%, 100% { border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
-            50% { border-color: rgba(6, 182, 212, 0.8); box-shadow: 0 0 22px rgba(6, 182, 212, 0.6); }
+        /* Animations */
+        @keyframes pulseBorder {
+            0%, 100% { border-color: rgba(6, 182, 212, 0.4); box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
+            50% { border-color: rgba(6, 182, 212, 0.9); box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
         }
-        .animate-pulse-cyan { animation: pulse-cyan 3s infinite ease-in-out; }
+        .animate-pulse-border {
+            animation: pulseBorder 3s infinite ease-in-out;
+        }
 
-        /* Ornate Dialogue Box Styling */
-        .dialogue-box {
-            background: linear-gradient(180deg, rgba(14, 165, 233, 0.25) 0%, rgba(3, 105, 161, 0.45) 100%);
-            border: 2px solid #0ea5e9;
-            box-shadow: 0 0 30px rgba(14, 165, 233, 0.5), inset 0 0 15px rgba(14, 165, 233, 0.3);
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+        .scanline-effect {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(to right, transparent, rgba(6, 182, 212, 0.4), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+        }
+
+        /* Ornate Frame Corner SVG Overlay Helper */
+        .corner-flourish {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .tl { top: -2px; left: -2px; }
+        .tr { top: -2px; right: -2px; transform: scaleX(-1); }
+        .bl { bottom: -2px; left: -2px; transform: scaleY(-1); }
+        .br { bottom: -2px; right: -2px; transform: scale(-1); }
+
+        /* Tech strikethrough effect */
+        .tech-strike {
             position: relative;
         }
-        
-        .dialogue-corner {
+        .tech-strike::after {
+            content: '';
             position: absolute;
-            width: 12px;
-            height: 12px;
-            border-color: #38bdf8;
+            left: 0; right: 0; top: 50%;
+            height: 2px;
+            background: #06b6d4;
+            box-shadow: 0 0 8px #06b6d4;
         }
-        .top-l { top: 4px; left: 4px; border-top: 2px solid; border-left: 2px solid; }
-        .top-r { top: 4px; right: 4px; border-top: 2px solid; border-right: 2px solid; }
-        .bot-l { bottom: 4px; left: 4px; border-bottom: 2px solid; border-left: 2px solid; }
-        .bot-r { bottom: 4px; right: 4px; border-bottom: 2px solid; border-right: 2px solid; }
-
-        /* Radar Chart Polygon Styling */
-        .radar-grid { stroke: rgba(6, 182, 212, 0.2); stroke-width: 1; fill: none; }
-        .radar-poly { fill: rgba(147, 51, 234, 0.35); stroke: #a855f7; stroke-width: 2.5; filter: drop-shadow(0px 0px 8px rgba(168, 85, 247, 0.7)); }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
+<body class="min-h-screen pb-12">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
+        // --- ORNATE SVG CORNER COMPONENT ---
+        const OrnateCorners = ({ color = "#06b6d4" }) => (
+            <React.Fragment>
+                <svg class="corner-flourish tl" viewBox="0 0 40 40">
+                    <path d="M2,40 V10 Q2,2 10,2 H40 M2,10 H15 V2 M6,14 V25 M14,6 H25" fill="none" stroke={color} strokeWidth="2" opacity="0.85"/>
+                    <circle cx="5" cy="5" r="2" fill={color}/>
+                </svg>
+                <svg class="corner-flourish tr" viewBox="0 0 40 40">
+                    <path d="M2,40 V10 Q2,2 10,2 H40 M2,10 H15 V2 M6,14 V25 M14,6 H25" fill="none" stroke={color} strokeWidth="2" opacity="0.85"/>
+                    <circle cx="5" cy="5" r="2" fill={color}/>
+                </svg>
+                <svg class="corner-flourish bl" viewBox="0 0 40 40">
+                    <path d="M2,40 V10 Q2,2 10,2 H40 M2,10 H15 V2 M6,14 V25 M14,6 H25" fill="none" stroke={color} strokeWidth="2" opacity="0.85"/>
+                    <circle cx="5" cy="5" r="2" fill={color}/>
+                </svg>
+                <svg class="corner-flourish br" viewBox="0 0 40 40">
+                    <path d="M2,40 V10 Q2,2 10,2 H40 M2,10 H15 V2 M6,14 V25 M14,6 H25" fill="none" stroke={color} strokeWidth="2" opacity="0.85"/>
+                    <circle cx="5" cy="5" r="2" fill={color}/>
+                </svg>
+            </React.Fragment>
+        );
+
+        // Main App Component
         function App() {
-            // Leveling & Stats State
-            const [level, setLevel] = useState(9);
-            const [xp, setXp] = useState(1143);
-            const [todayXp, setTodayXp] = useState(50);
-            const [gold, setGold] = useState(85);
-            const [streak, setStreak] = useState(87);
-            const [activeTab, setActiveTab] = useState("overview");
-            const [rankIndex, setRankIndex] = useState(0); // 0: E, 1: D, 2: C, 3: B, 4: A, 5: S
-            const [shiftActive, setShiftActive] = useState(false);
-
-            // Hunter Ranks Config
-            const ranks = [
-                { name: "E-Rank", minLvl: 1, maxLvl: 9, mult: "x1.0", nextXp: 1500, color: "text-gray-300", border: "border-gray-500" },
-                { name: "D-Rank", minLvl: 10, maxLvl: 24, mult: "x1.5", nextXp: 3500, color: "text-green-400", border: "border-green-500" },
-                { name: "C-Rank", minLvl: 25, maxLvl: 49, mult: "x2.0", nextXp: 8000, color: "text-blue-400", border: "border-blue-500" },
-                { name: "B-Rank", minLvl: 50, maxLvl: 99, mult: "x3.0", nextXp: 18000, color: "text-purple-400", border: "border-purple-500" },
-                { name: "A-Rank", minLvl: 100, maxLvl: 199, mult: "x4.5", nextXp: 40000, color: "text-amber-400", border: "border-amber-500" },
-                { name: "S-Rank", minLvl: 200, maxLvl: 999, mult: "x6.0", nextXp: 100000, color: "text-red-500", border: "border-red-600" }
-            ];
-
-            const currentRank = ranks[rankIndex];
-
-            // Attributes & Stats
-            const [stats, setStats] = useState({ str: 14, agi: 12, int: 16, vit: 13, dis: 15 });
-            const [statPoints, setStatPoints] = useState(3);
-
-            // Dialogue Box State
-            const [activeAlarm, setActiveAlarm] = useState({
-                visible: true,
-                title: "ALARM",
-                message: "THE SYSTEM WILL HELP THE 'PLAYER'S GROWTH.",
-                highlight: "PLAYER",
-                type: "cyan"
+            // --- PLAYER STATE (E-Rank True Zero Baseline) ---
+            const [player, setPlayer] = useState(() => {
+                const saved = localStorage.getItem('solo_player_v3');
+                return saved ? JSON.parse(saved) : {
+                    level: 1,
+                    xp: 0,
+                    nextXp: 100,
+                    rank: 'E-Rank',
+                    multiplier: 1.0,
+                    gold: 0,
+                    streak: 0,
+                    unassignedStats: 0,
+                    stats: { STR: 0, AGI: 0, INT: 0, VIT: 0, DIS: 0 },
+                    height: 5.708, // 5'8.5" stored in decimal feet
+                    weight: 58.5,
+                    proteinLogged: 0,
+                    decompressionDone: false,
+                    lastActiveDate: new Date().toISOString().split('T')[0]
+                };
             });
 
-            // Stopwatches State (Economics & Sociology)
-            const [econTime, setEconTime] = useState(0);
-            const [econRunning, setEconRunning] = useState(false);
+            // --- GHOST PLAYER (SHADOW RIVAL) STATE ---
+            const [ghost, setGhost] = useState(() => {
+                const saved = localStorage.getItem('solo_ghost_v3');
+                return saved ? JSON.parse(saved) : {
+                    level: 2,
+                    xp: 45,
+                    rank: 'E-Rank',
+                    stats: { STR: 3, AGI: 2, INT: 4, VIT: 2, DIS: 5 },
+                    studyHoursLogged: 4.5,
+                    tasksDone: 6
+                };
+            });
+
+            // Active Tab Navigation State
+            const [activeTab, setActiveTab] = useState('overview');
+
+            // --- REVISION STOPWATCH STATE ---
+            const [ecoTime, setEcoTime] = useState(0); // in seconds
+            const [ecoRunning, setEcoRunning] = useState(false);
             const [socTime, setSocTime] = useState(0);
             const [socRunning, setSocRunning] = useState(false);
 
-            // Directives & Custom Quests
-            const [dailyDirectives, setDailyDirectives] = useState([
-                { id: 1, title: "Gym PPL Protocol + Decompression", category: "GYM", xp: 100, gold: 10, completed: false },
-                { id: 2, title: "Economics Active Recall Session", category: "STUDY", xp: 120, gold: 15, completed: false },
-                { id: 3, title: "Sociology Exam Paper Practice", category: "STUDY", xp: 120, gold: 15, completed: false },
-                { id: 4, title: "Hit Daily Nutrition & Protein Goal", category: "NUTRITION", xp: 80, gold: 10, completed: false }
+            // --- QUESTS / DIRECTIVES ---
+            const [directives, setDirectives] = useState(() => {
+                const saved = localStorage.getItem('solo_directives_v3');
+                return saved ? JSON.parse(saved) : [
+                    { id: 1, text: 'Complete 1h Economics Active Recall', category: 'Study', completed: false, xp: 40, gold: 15 },
+                    { id: 2, text: 'Complete 1h Sociology Essay Outline', category: 'Study', completed: false, xp: 40, gold: 15 },
+                    { id: 3, text: 'Execute PPL Gym Session + 120g Protein', category: 'Fitness', completed: false, xp: 50, gold: 20 },
+                    { id: 4, text: '15-min Spinal Decompression Hanging', category: 'Fitness', completed: false, xp: 30, gold: 10 },
+                    { id: 5, text: 'No Unearned Screen Time / Zero Slacking', category: 'Discipline', completed: false, xp: 40, gold: 15 }
+                ];
+            });
+
+            // --- PENALTY QUEST STATUS ---
+            const [activePenalty, setActivePenalty] = useState(null);
+
+            // --- CALENDAR & DEADLINES ---
+            const [deadlines, setDeadlines] = useState(() => {
+                const saved = localStorage.getItem('solo_deadlines_v3');
+                return saved ? JSON.parse(saved) : [
+                    { id: 1, date: '2026-11-02', title: 'Sociology Unit 3 Mock Exam', type: 'Exam' },
+                    { id: 2, date: '2026-11-10', title: 'Economics Market Essay Due', type: 'Assignment' }
+                ];
+            });
+
+            // --- SHOP ITEMS ---
+            const [shopItems] = useState([
+                { id: 1, name: '£5 Cashout Allowance', cost: 100, desc: 'Unlock real-life pocket spending money', icon: 'fa-coins' },
+                { id: 2, name: '1h Guilt-Free Gaming Pass', cost: 150, desc: 'Play FIFA/Games guilt-free without punishment', icon: 'fa-gamepad' },
+                { id: 3, name: 'High-Protein Cheat Treat Pass', cost: 80, desc: 'Enjoy a tasty recovery snack', icon: 'fa-utensils' },
+                { id: 4, name: 'Rest / Movie Evening Unlock', cost: 200, desc: 'Unwind completely after heavy study weeks', icon: 'fa-tv' }
             ]);
 
-            const [customQuests, setCustomQuests] = useState([
-                { id: 101, title: "UCAS Personal Statement Draft 2", deadline: "2026-12-01T23:59", category: "UCAS", xp: 200, gold: 30, completed: false },
-                { id: 102, title: "CTEC Business Unit 4 Portfolio", deadline: "2026-11-15T18:00", category: "WORK", xp: 150, gold: 20, completed: false }
-            ]);
+            // --- SYSTEM AI EVALUATOR TERMINAL ---
+            const [aiQuery, setAiQuery] = useState('');
+            const [aiResponse, setAiResponse] = useState(null);
+            const [aiLoading, setAiLoading] = useState(false);
 
-            const [newQuestTitle, setNewQuestTitle] = useState("");
-            const [newQuestCategory, setNewQuestCategory] = useState("UCAS");
-            const [newQuestDeadline, setNewQuestDeadline] = useState("");
+            // Level Up Aura Overlay Flash State
+            const [showLevelUpAlert, setShowLevelUpAlert] = useState(false);
 
-            // Stopwatches logic
+            // --- PERSISTENCE EFFECT ---
+            useEffect(() => {
+                localStorage.setItem('solo_player_v3', JSON.stringify(player));
+            }, [player]);
+
+            useEffect(() => {
+                localStorage.setItem('solo_ghost_v3', JSON.stringify(ghost));
+            }, [ghost]);
+
+            useEffect(() => {
+                localStorage.setItem('solo_directives_v3', JSON.stringify(directives));
+            }, [directives]);
+
+            useEffect(() => {
+                localStorage.setItem('solo_deadlines_v3', JSON.stringify(deadlines));
+            }, [deadlines]);
+
+            // --- STOPWATCH TICKERS ---
             useEffect(() => {
                 let interval = null;
-                if (econRunning) {
-                    interval = setInterval(() => setEconTime(t => t + 1), 1000);
-                } else {
-                    clearInterval(interval);
+                if (ecoRunning) {
+                    interval = setInterval(() => setEcoTime(prev => prev + 1), 1000);
                 }
                 return () => clearInterval(interval);
-            }, [econRunning]);
+            }, [ecoRunning]);
 
             useEffect(() => {
                 let interval = null;
                 if (socRunning) {
-                    interval = setInterval(() => setSocTime(t => t + 1), 1000);
-                } else {
-                    clearInterval(interval);
+                    interval = setInterval(() => setSocTime(prev => prev + 1), 1000);
                 }
                 return () => clearInterval(interval);
             }, [socRunning]);
 
-            const formatTime = (seconds) => {
-                const hrs = Math.floor(seconds / 3600);
-                const mins = Math.floor((seconds % 3600) / 60);
-                const secs = seconds % 60;
-                return `${hrs > 0 ? hrs + ':' : ''}${mins < 10 && hrs > 0 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            // --- SHADOW RIVAL (GHOST PLAYER) SIMULATOR TICK ---
+            useEffect(() => {
+                const ghostInterval = setInterval(() => {
+                    // Ghost player advances automatically every 60 seconds
+                    setGhost(prev => {
+                        const addedXp = Math.floor(Math.random() * 5) + 1;
+                        let newXp = prev.xp + addedXp;
+                        let newLvl = prev.level;
+                        if (newXp >= 100) {
+                            newLvl += 1;
+                            newXp -= 100;
+                        }
+                        return {
+                            ...prev,
+                            level: newLvl,
+                            xp: newXp,
+                            studyHoursLogged: +(prev.studyHoursLogged + 0.02).toFixed(2),
+                            stats: {
+                                ...prev.stats,
+                                INT: prev.stats.INT + (Math.random() > 0.8 ? 1 : 0),
+                                DIS: prev.stats.DIS + (Math.random() > 0.8 ? 1 : 0)
+                            }
+                        };
+                    });
+                }, 45000);
+                return () => clearInterval(ghostInterval);
+            }, []);
+
+            // --- REWARD & XP ENGINE ---
+            const addXpAndGold = (xpGain, goldGain, statKey = null) => {
+                setPlayer(prev => {
+                    let totalXp = prev.xp + xpGain;
+                    let currentLvl = prev.level;
+                    let unassigned = prev.unassignedStats;
+                    let leveledUp = false;
+
+                    while (totalXp >= prev.nextXp) {
+                        totalXp -= prev.nextXp;
+                        currentLvl += 1;
+                        unassigned += 2;
+                        leveledUp = true;
+                    }
+
+                    if (leveledUp) {
+                        setShowLevelUpAlert(true);
+                        setTimeout(() => setShowLevelUpAlert(false), 4000);
+                    }
+
+                    // Rank updates
+                    let rankName = 'E-Rank';
+                    let mult = 1.0;
+                    if (currentLvl >= 15) { rankName = 'S-Rank'; mult = 5.0; }
+                    else if (currentLvl >= 10) { rankName = 'A-Rank'; mult = 3.5; }
+                    else if (currentLvl >= 7) { rankName = 'B-Rank'; mult = 2.5; }
+                    else if (currentLvl >= 4) { rankName = 'C-Rank'; mult = 1.8; }
+                    else if (currentLvl >= 2) { rankName = 'D-Rank'; mult = 1.3; }
+
+                    const updatedStats = { ...prev.stats };
+                    if (statKey) updatedStats[statKey] += 1;
+
+                    return {
+                        ...prev,
+                        level: currentLvl,
+                        xp: totalXp,
+                        gold: prev.gold + goldGain,
+                        unassignedStats: unassigned,
+                        rank: rankName,
+                        multiplier: mult,
+                        stats: updatedStats
+                    };
+                });
             };
 
-            const triggerAlarm = (title, message, highlight, type = "cyan") => {
-                setActiveAlarm({ visible: true, title, message, highlight, type });
-            };
+            // --- STOPWATCH CASH IN ---
+            const claimStopwatchEarnings = (type) => {
+                let durationSec = type === 'eco' ? ecoTime : socTime;
+                if (durationSec < 10) return;
 
-            const addXp = (amount, goldEarned) => {
-                const newTotalXp = xp + amount;
-                const newToday = todayXp + amount;
-                const newGold = gold + goldEarned;
-                setXp(newTotalXp);
-                setTodayXp(newToday);
-                setGold(newGold);
+                // 1 min = 1 Gold + 2 XP for rapid feel (Scaled for realistic demo)
+                const minutes = Math.floor(durationSec / 60) || 1;
+                const goldEarned = minutes * 2;
+                const xpEarned = minutes * 5;
 
-                if (newTotalXp >= currentRank.nextXp && rankIndex < ranks.length - 1) {
-                    setRankIndex(r => r + 1);
-                    setStatPoints(p => p + 5);
-                    triggerAlarm("RANK UP", `CONGRATULATIONS. YOU HAVE ASCENDED TO ${ranks[rankIndex + 1].name}!`, ranks[rankIndex + 1].name, "cyan");
+                addXpAndGold(xpEarned, goldEarned, 'INT');
+
+                if (type === 'eco') {
+                    setEcoTime(0);
+                    setEcoRunning(false);
                 } else {
-                    triggerAlarm("ALARM", `[YOUR REWARDS HAVE ARRIVED. +${amount} XP / +${goldEarned} GOLD]`, "REWARDS", "cyan");
+                    setSocTime(0);
+                    setSocRunning(false);
                 }
             };
 
+            // --- TOGGLE DIRECTIVE COMPLETION ---
             const toggleDirective = (id) => {
-                setDailyDirectives(dailyDirectives.map(d => {
+                setDirectives(prev => prev.map(d => {
                     if (d.id === id) {
-                        const nextState = !d.completed;
-                        if (nextState) addXp(d.xp, d.gold);
-                        return { ...d, completed: nextState };
+                        if (!d.completed) {
+                            addXpAndGold(d.xp, d.gold, d.category === 'Fitness' ? 'STR' : 'DIS');
+                        }
+                        return { ...d, completed: !d.completed };
                     }
                     return d;
                 }));
             };
 
-            const toggleCustomQuest = (id) => {
-                setCustomQuests(customQuests.map(q => {
-                    if (q.id === id) {
-                        const nextState = !q.completed;
-                        if (nextState) addXp(q.xp, q.gold);
-                        return { ...q, completed: nextState };
+            // --- STAT ALLOCATION ---
+            const allocateStat = (statName) => {
+                if (player.unassignedStats <= 0) return;
+                setPlayer(prev => ({
+                    ...prev,
+                    unassignedStats: prev.unassignedStats - 1,
+                    stats: {
+                        ...prev.stats,
+                        [statName]: prev.stats[statName] + 1
                     }
-                    return q;
                 }));
             };
 
-            const addCustomQuest = (e) => {
-                e.preventDefault();
-                if (!newQuestTitle.trim() || !newQuestDeadline) return;
-                const quest = {
-                    id: Date.now(),
-                    title: newQuestTitle,
-                    category: newQuestCategory,
-                    deadline: newQuestDeadline,
-                    xp: 150,
-                    gold: 25,
-                    completed: false
-                };
-                setCustomQuests([...customQuests, quest]);
-                setNewQuestTitle("");
-                setNewQuestDeadline("");
-                triggerAlarm("SYSTEM DIRECTIVE", "[NEW CUSTOM QUEST ASSIGNED TO YOUR COMMAND]", "QUEST ASSIGNED", "cyan");
+            // --- SHOP PURCHASE ---
+            const handlePurchase = (item) => {
+                if (player.gold < item.cost) {
+                    alert("INSUFFICIENT GOLD COINS! Complete more study stopwatches and daily directives.");
+                    return;
+                }
+                setPlayer(prev => ({ ...prev, gold: prev.gold - item.cost }));
+                alert(`[PURCHASE SUCCESSFUL]\nUnlocked: ${item.name}`);
             };
 
-            // Calculate Completion Percentage for Brutal System Warning
-            const completedCount = dailyDirectives.filter(d => d.completed).length;
-            const completionRate = Math.round((completedCount / dailyDirectives.length) * 100);
-
-            // Radar Chart Geometry (5 Axes: STR, AGI, INT, VIT, DIS)
-            const getRadarCoordinates = (statsObj) => {
-                const maxVal = 30;
-                const keys = ['str', 'agi', 'int', 'vit', 'dis'];
-                const angles = [-Math.PI / 2, -Math.PI / 10, Math.PI * 3 / 10, Math.PI * 7 / 10, Math.PI * 11 / 10];
-                const points = keys.map((key, i) => {
-                    const r = (Math.min(statsObj[key], maxVal) / maxVal) * 75;
-                    const x = 100 + r * Math.cos(angles[i]);
-                    const y = 100 + r * Math.sin(angles[i]);
-                    return `${x},${y}`;
+            // --- TRIGGER MANDATORY PENALTY ---
+            const triggerPenalty = () => {
+                setActivePenalty({
+                    title: 'SYSTEM PENALTY QUEST - DEFICIT DETECTED',
+                    requirements: [
+                        '100 Strict Push-ups / Burpees',
+                        '15-Minute Hanging Spinal Decompression',
+                        '1 Hour Phone Isolation & Lockdown'
+                    ]
                 });
-                return points.join(' ');
+            };
+
+            const resolvePenalty = () => {
+                setActivePenalty(null);
+                setPlayer(prev => ({
+                    ...prev,
+                    stats: { ...prev.stats, DIS: prev.stats.DIS + 1 }
+                }));
+            };
+
+            // --- SIMULATED SYSTEM AI EVALUATOR LOGIC ---
+            const handleAiEvaluation = () => {
+                if (!aiQuery.trim()) return;
+                setAiLoading(true);
+                setAiResponse(null);
+
+                setTimeout(() => {
+                    const completedDirectivesCount = directives.filter(d => d.completed).length;
+                    const ecoHours = (ecoTime / 3600).toFixed(1);
+                    const socHours = (socTime / 3600).toFixed(1);
+                    const totalHours = parseFloat(ecoHours) + parseFloat(socHours);
+
+                    let approved = false;
+                    let verdict = "";
+                    let shadowGap = ghost.level - player.level;
+
+                    if (completedDirectivesCount >= 4 && totalHours >= 1.5) {
+                        approved = true;
+                        verdict = `AUTHORIZATION APPROVED. You have completed ${completedDirectivesCount}/${directives.length} directives today and logged ${totalHours}h of study. Enjoy your activity, but maintain your recovery window.`;
+                    } else {
+                        approved = false;
+                        verdict = `AUTHORIZATION DENIED. Weak execution detected! You have only completed ${completedDirectivesCount}/${directives.length} directives. Your Shadow Rival is Level ${ghost.level} while you sit at Level ${player.level} (${shadowGap > 0 ? shadowGap + ' levels behind' : 'neck and neck'}). Return to your Economics / Sociology revision immediately before requesting leisure time!`;
+                    }
+
+                    setAiResponse({ approved, verdict });
+                    setAiLoading(false);
+                }, 1200);
+            };
+
+            // Format Stopwatch Time Helper
+            const formatTime = (seconds) => {
+                const hrs = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             };
 
             return (
-                <div className="max-w-md mx-auto min-h-screen pb-24 px-3 pt-4 bg-gray-950 text-gray-100 relative font-sans">
-                    
-                    {/* TOP BRANDING & TAB NAV */}
-                    <header className="mb-4">
-                        <div className="flex justify-between items-center mb-3">
-                            <h1 className="font-orbitron font-black text-lg text-cyan-400 tracking-wider text-glow-cyan">SYSTEM HUD</h1>
-                            <div className="flex items-center space-x-2">
-                                <button onClick={() => setShiftActive(!shiftActive)} className={`px-2.5 py-1 text-[10px] font-orbitron font-bold rounded border transition ${shiftActive ? 'bg-green-950/80 border-green-500 text-green-300' : 'bg-gray-900 border-gray-700 text-gray-400'}`}>
-                                    {shiftActive ? '🟢 SHIFT ACTIVE (£8/h)' : '⚪ SHIFT OFF'}
-                                </button>
-                                <span className="text-xs font-orbitron font-bold text-yellow-400 bg-yellow-950/40 border border-yellow-600/50 px-2 py-0.5 rounded">
-                                    🪙 {gold}
-                                </span>
+                <div class="max-w-6xl mx-auto px-4 py-6 relative">
+                    {/* LEVEL UP FLASH OVERLAY */}
+                    {showLevelUpAlert && (
+                        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md transition-all">
+                            <div class="relative bg-slate-950 p-8 rounded-xl panel-border text-center max-w-md animate-pulse-border">
+                                <OrnateCorners color="#06b6d4" />
+                                <div class="text-4xl font-black font-orbitron text-cyan-400 cyan-glow mb-2">LEVEL UP!</div>
+                                <div class="text-lg text-slate-300 mb-4">YOUR SYSTEM POWER HAS ASCENDED</div>
+                                <div class="text-2xl font-bold text-yellow-400 mb-2">CURRENT LEVEL: {player.level}</div>
+                                <p class="text-sm text-cyan-300">Stat Points Granted: +2 Unassigned Stats</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TOP STATUS / HEADER SYSTEM BAR */}
+                    <header class="relative bg-slate-950/90 rounded-xl p-5 mb-6 panel-border animate-pulse-border">
+                        <OrnateCorners color="#06b6d4" />
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 rounded-lg bg-cyan-950/80 border border-cyan-500 flex items-center justify-center text-cyan-400 font-black font-orbitron text-xl cyan-glow">
+                                    L{player.level}
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <h1 class="text-2xl font-black font-orbitron tracking-wider text-cyan-400 cyan-glow">SYSTEM HUD</h1>
+                                        <span class="px-2.5 py-0.5 rounded text-xs font-bold font-orbitron bg-cyan-950 text-cyan-300 border border-cyan-500">
+                                            {player.rank} (x{player.multiplier.toFixed(1)})
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 font-mono mt-1">STATUS: ACTIVE HUNTER PROTOCOL</p>
+                                </div>
+                            </div>
+
+                            {/* CURRENCY & EXP BAR HEADER */}
+                            <div class="flex items-center space-x-6">
+                                <div class="bg-slate-900/90 border border-amber-500/40 px-4 py-2 rounded-lg flex items-center space-x-3">
+                                    <i class="fa-solid fa-coins text-yellow-400 gold-glow text-xl"></i>
+                                    <div>
+                                        <div class="text-xs text-slate-400">GOLD BALANCE</div>
+                                        <div class="text-lg font-bold font-orbitron text-yellow-400">{player.gold} PTS</div>
+                                    </div>
+                                </div>
+
+                                <div class="w-48">
+                                    <div class="flex justify-between text-xs text-cyan-300 font-orbitron mb-1">
+                                        <span>EXP PROGRESS</span>
+                                        <span>{player.xp}/{player.nextXp}</span>
+                                    </div>
+                                    <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-cyan-950">
+                                        <div 
+                                            class="h-full bg-gradient-to-r from-cyan-600 to-blue-500 transition-all duration-300"
+                                            style={{ width: `${(player.xp / player.nextXp) * 100}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Top Tab Bar Navigation */}
-                        <div className="grid grid-cols-4 gap-1 p-1 bg-gray-900/80 rounded-xl border border-cyan-900/40">
-                            {["overview", "progress", "stats", "fitness"].map((tab) => (
-                                <button 
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`py-2 text-[11px] font-orbitron font-bold uppercase rounded-lg transition-all ${activeTab === tab ? 'bg-cyan-600 text-white shadow-lg glow-cyan' : 'text-gray-400 hover:text-cyan-300'}`}
+                        {/* NAV TAB BAR */}
+                        <nav class="flex flex-wrap gap-2 mt-6 pt-4 border-t border-slate-800/80">
+                            {[
+                                { id: 'overview', label: 'Overview', icon: 'fa-gauge-high' },
+                                { id: 'study', label: 'Study Stopwatches', icon: 'fa-book-open' },
+                                { id: 'stats', label: 'Attributes & Rival', icon: 'fa-chart-simple' },
+                                { id: 'fitness', label: 'Fitness & Height Matrix', icon: 'fa-dumbbell' },
+                                { id: 'calendar', label: 'Calendar & Deadlines', icon: 'fa-calendar-days' },
+                                { id: 'shop', label: 'System Shop', icon: 'fa-store' },
+                                { id: 'ai', label: 'AI Evaluator', icon: 'fa-brain' },
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    class={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                        activeTab === tab.id
+                                            ? 'bg-cyan-950 text-cyan-300 border border-cyan-500 cyan-glow'
+                                            : 'bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:bg-slate-900 border border-transparent'
+                                    }`}
                                 >
-                                    {tab}
+                                    <i class={`fa-solid ${tab.icon}`}></i>
+                                    <span>{tab.label}</span>
                                 </button>
                             ))}
-                        </div>
+                        </nav>
                     </header>
 
-                    {/* ORNATE SYSTEM ALARM POPUP */}
-                    {activeAlarm.visible && (
-                        <div className="dialogue-box rounded-lg p-3.5 mb-4 animate-pulse-cyan">
-                            <div className="top-l dialogue-corner"></div>
-                            <div className="top-r dialogue-corner"></div>
-                            <div className="bot-l dialogue-corner"></div>
-                            <div className="bot-r dialogue-corner"></div>
-
-                            <div className="flex justify-between items-center mb-1 border-b border-cyan-500/30 pb-1">
-                                <div className="flex items-center space-x-1.5">
-                                    <span className="text-cyan-300 font-bold">ⓘ</span>
-                                    <span className="font-orbitron font-black text-xs text-cyan-200 tracking-widest">{activeAlarm.title}</span>
+                    {/* MANDATORY PENALTY BANNER IF ACTIVE */}
+                    {activePenalty && (
+                        <div class="relative bg-red-950/90 border border-red-600 p-6 rounded-xl mb-6 panel-border-danger">
+                            <OrnateCorners color="#ef4444" />
+                            <div class="flex items-start space-x-4">
+                                <i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl red-glow mt-1"></i>
+                                <div class="flex-1">
+                                    <h2 class="text-xl font-bold font-orbitron text-red-400 red-glow">{activePenalty.title}</h2>
+                                    <p class="text-sm text-slate-300 mt-1">Directive deficit detected! Clear penalty quest to restore stat progress:</p>
+                                    <ul class="list-disc list-inside text-sm text-red-300 mt-2 space-y-1">
+                                        {activePenalty.requirements.map((req, i) => <li key={i}>{req}</li>)}
+                                    </ul>
                                 </div>
-                                <button onClick={() => setActiveAlarm({ ...activeAlarm, visible: false })} className="text-xs text-cyan-400 hover:text-white font-bold">-[X]</button>
+                                <button 
+                                    onClick={resolvePenalty}
+                                    class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg text-sm transition-all"
+                                >
+                                    LOG PENALTY EXECUTED
+                                </button>
                             </div>
-                            <p className="text-center font-orbitron text-xs text-cyan-100 py-1 tracking-wide font-semibold">
-                                {activeAlarm.message.split(activeAlarm.highlight).map((part, i, arr) => (
-                                    <React.Fragment key={i}>
-                                        {part}
-                                        {i < arr.length - 1 && (
-                                            <span className={activeAlarm.type === 'red' ? 'text-red-500 font-bold text-glow-red' : 'text-green-400 font-bold text-glow-cyan'}>
-                                                {activeAlarm.highlight}
-                                            </span>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </p>
                         </div>
                     )}
 
-                    {/* TAB 1: OVERVIEW */}
-                    {activeTab === "overview" && (
-                        <div className="space-y-4">
-                            {/* Metric Cards Grid */}
-                            <div className="grid grid-cols-2 gap-2.5">
-                                <div className="system-card p-3 rounded-lg">
-                                    <div className="flex justify-between items-center text-[10px] text-cyan-400 font-orbitron font-bold mb-1">
-                                        <span>⚡ LEVEL</span>
-                                        <span className="text-white text-sm font-black">{level}</span>
+                    {/* TAB 1: OVERVIEW & DAILY DIRECTIVES */}
+                    {activeTab === 'overview' && (
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* LEFT 2 COLS: DAILY QUESTS */}
+                            <div class="lg:col-span-2 space-y-6">
+                                <div class="relative bg-slate-950/80 p-6 rounded-xl panel-border">
+                                    <OrnateCorners color="#06b6d4" />
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fa-solid fa-list-check text-cyan-400"></i>
+                                            <h2 class="text-lg font-bold font-orbitron text-cyan-400">DAILY QUEST DIRECTIVES</h2>
+                                        </div>
+                                        <span class="text-xs text-slate-400 font-mono">
+                                            COMPLETED: {directives.filter(d=>d.completed).length}/{directives.length}
+                                        </span>
                                     </div>
-                                    <div className="text-[10px] text-gray-400">Current Level</div>
-                                </div>
 
-                                <div className="system-card p-3 rounded-lg">
-                                    <div className="flex justify-between items-center text-[10px] text-cyan-400 font-orbitron font-bold mb-1">
-                                        <span>🏆 RANK</span>
-                                        <span className={`text-sm font-black ${currentRank.color}`}>{currentRank.name}</span>
-                                    </div>
-                                    <div className="text-[10px] text-gray-400">Mult: {currentRank.mult}</div>
-                                </div>
-
-                                <div className="system-card p-3 rounded-lg">
-                                    <div className="flex justify-between items-center text-[10px] text-cyan-400 font-orbitron font-bold mb-1">
-                                        <span>✨ TODAY XP</span>
-                                        <span className="text-cyan-300 text-sm font-black">+{todayXp}</span>
-                                    </div>
-                                    <div className="text-[10px] text-gray-400">Daily Gain</div>
-                                </div>
-
-                                <div className="system-card p-3 rounded-lg">
-                                    <div className="flex justify-between items-center text-[10px] text-cyan-400 font-orbitron font-bold mb-1">
-                                        <span>🎖️ TOTAL XP</span>
-                                        <span className="text-white text-sm font-black">{xp}</span>
-                                    </div>
-                                    <div className="text-[10px] text-gray-400">Next: {currentRank.nextXp}</div>
-                                </div>
-
-                                <div className="system-card-gold p-3 rounded-lg">
-                                    <div className="flex justify-between items-center text-[10px] text-yellow-400 font-orbitron font-bold mb-1">
-                                        <span>🔥 STREAK</span>
-                                        <span className="text-yellow-300 text-sm font-black">{streak} DAYS</span>
-                                    </div>
-                                    <div className="text-[10px] text-yellow-500/80">Best: {streak} Days</div>
-                                </div>
-
-                                <div className="system-card p-3 rounded-lg">
-                                    <div className="flex justify-between items-center text-[10px] text-cyan-400 font-orbitron font-bold mb-1">
-                                        <span>🎯 DIRECTIVES</span>
-                                        <span className="text-white text-sm font-black">{completedCount} / {dailyDirectives.length}</span>
-                                    </div>
-                                    <div className="text-[10px] text-gray-400">{completionRate}% Completed</div>
-                                </div>
-                            </div>
-
-                            {/* Weekly Activity Line Chart */}
-                            <div className="system-card p-4 rounded-xl glow-cyan">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="font-orbitron text-xs font-bold text-cyan-400">WEEKLY ACTIVITY</span>
-                                    <span className="text-[10px] text-gray-400 font-orbitron">LAST 7 DAYS</span>
-                                </div>
-                                <div className="h-28 w-full relative flex items-end pt-4">
-                                    <svg className="w-full h-full overflow-visible" viewBox="0 0 300 80">
-                                        <path d="M 10 60 Q 50 10, 100 15 T 190 45 T 280 70" fill="none" stroke="url(#grad)" strokeWidth="3" />
-                                        <defs>
-                                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stopColor="#06b6d4" />
-                                                <stop offset="50%" stopColor="#3b82f6" />
-                                                <stop offset="100%" stopColor="#22c55e" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <div className="flex justify-between text-[10px] text-gray-400 font-orbitron border-t border-gray-800 pt-1 mt-1">
-                                    <span>F</span><span>S</span><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span>
-                                </div>
-                            </div>
-
-                            {/* Consistency Neon Grid */}
-                            <div className="system-card p-4 rounded-xl">
-                                <span className="font-orbitron text-xs font-bold text-cyan-400 block mb-3">CONSISTENCY CYCLE</span>
-                                <div className="flex justify-between items-center px-2">
-                                    {['F', 'S', 'S', 'M', 'T', 'W', 'T'].map((day, idx) => (
-                                        <div key={idx} className="flex flex-col items-center space-y-1.5">
-                                            <div className={`w-6 h-6 rounded flex items-center justify-center border shadow ${idx < 6 ? 'bg-green-500 border-green-400 shadow-green-500/50' : 'border-gray-700 bg-gray-900'}`}>
-                                                {idx < 6 && <span className="text-black text-xs font-bold">✓</span>}
+                                    <div class="space-y-3">
+                                        {directives.map(directive => (
+                                            <div 
+                                                key={directive.id}
+                                                onClick={() => toggleDirective(directive.id)}
+                                                class={`flex items-center justify-between p-4 rounded-lg border cursor-pointer transition-all ${
+                                                    directive.completed 
+                                                        ? 'bg-cyan-950/20 border-cyan-800 text-slate-400' 
+                                                        : 'bg-slate-900/80 border-slate-800 text-slate-200 hover:border-cyan-500/50'
+                                                }`}
+                                            >
+                                                <div class="flex items-center space-x-3">
+                                                    <div class={`w-5 h-5 rounded border flex items-center justify-center ${
+                                                        directive.completed ? 'bg-cyan-500 border-cyan-400 text-slate-950' : 'border-slate-600'
+                                                    }`}>
+                                                        {directive.completed && <i class="fa-solid fa-check text-xs font-bold"></i>}
+                                                    </div>
+                                                    <span class={directive.completed ? 'tech-strike line-through text-slate-500' : 'font-medium'}>
+                                                        {directive.text}
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center space-x-2 text-xs font-orbitron">
+                                                    <span class="text-cyan-400">+{directive.xp} XP</span>
+                                                    <span class="text-yellow-400">+{directive.gold} GOLD</span>
+                                                </div>
                                             </div>
-                                            <span className="text-[10px] font-orbitron text-gray-400">{day}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* TAB 2: PROGRESS & RANK SELECTOR */}
-                    {activeTab === "progress" && (
-                        <div className="space-y-4">
-                            {/* Arisesolo Inspired Circular Tier Selector */}
-                            <div className="system-card p-5 rounded-xl glow-cyan text-center relative overflow-hidden">
-                                <div className="font-orbitron text-xs text-cyan-400 font-bold mb-4">HUNTER RANK CORE SYNC</div>
-                                
-                                {/* Hexagon Rank Ring Display */}
-                                <div className="relative w-48 h-48 mx-auto flex items-center justify-center my-2">
-                                    <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-                                        <circle cx="96" cy="96" r="80" stroke="rgba(6, 182, 212, 0.15)" strokeWidth="6" fill="none" />
-                                        <circle cx="96" cy="96" r="80" stroke="#06b6d4" strokeWidth="6" fill="none" strokeDasharray="502" strokeDashoffset={502 - (502 * ((rankIndex + 1) / 6))} strokeLinecap="round" />
-                                    </svg>
-
-                                    {/* Central Selected Rank */}
-                                    <div className="w-24 h-24 bg-gray-900/90 border-2 border-cyan-400 flex flex-col items-center justify-center rounded-xl shadow-lg shadow-cyan-500/30 z-10">
-                                        <span className="font-orbitron font-black text-3xl text-cyan-300">{currentRank.name.charAt(0)}</span>
-                                        <span className="text-[9px] font-orbitron text-gray-400 mt-0.5">{currentRank.name}</span>
-                                    </div>
-                                </div>
-
-                                {/* Rank Selector Buttons */}
-                                <div className="flex justify-center gap-1.5 mt-2">
-                                    {ranks.map((r, i) => (
-                                        <button 
-                                            key={r.name}
-                                            onClick={() => setRankIndex(i)}
-                                            className={`w-8 h-8 rounded-lg font-orbitron font-bold text-xs border transition ${rankIndex === i ? 'bg-cyan-600 border-cyan-400 text-white shadow-md glow-cyan' : 'bg-gray-900 border-gray-800 text-gray-400'}`}
-                                        >
-                                            {r.name.charAt(0)}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                <div className="mt-4 border-t border-gray-800 pt-3 text-left space-y-1 text-xs font-orbitron">
-                                    <div className="flex justify-between text-gray-400">
-                                        <span>SYNC STATUS:</span>
-                                        <span className="text-cyan-400 font-bold">88% ESTABLISHED</span>
-                                    </div>
-                                    <div className="flex justify-between text-gray-400">
-                                        <span>XP TO NEXT RANK:</span>
-                                        <span className="text-yellow-400 font-bold">{currentRank.nextXp - xp} XP NEEDED</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* CUSTOM SUBJECT STOPWATCHES (Economics & Sociology) */}
-                            <div className="space-y-3">
-                                <h3 className="font-orbitron font-bold text-xs text-cyan-400">SUBJECT REVISION STOPWATCHES</h3>
-                                
-                                {/* Economics Stopwatch */}
-                                <div className="system-card p-4 rounded-xl flex items-center justify-between border-blue-500/40">
-                                    <div>
-                                        <div className="font-orbitron font-bold text-sm text-blue-400">ECONOMICS A-LEVEL</div>
-                                        <div className="font-orbitron text-2xl font-black text-white my-1">{formatTime(econTime)}</div>
-                                        <div className="text-[10px] text-gray-400">Active Recall / Past Papers</div>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <button 
-                                            onClick={() => setEconRunning(!econRunning)} 
-                                            className={`px-4 py-2 rounded-lg font-orbitron text-xs font-bold ${econRunning ? 'bg-red-600 text-white' : 'bg-blue-600 text-white shadow-md'}`}
-                                        >
-                                            {econRunning ? 'STOP' : 'START'}
-                                        </button>
-                                        <button 
-                                            onClick={() => { setEconRunning(false); if(econTime > 60) addXp(Math.floor(econTime/10), 10); setEconTime(0); }} 
-                                            className="px-4 py-1 rounded bg-gray-800 text-gray-300 text-[10px] font-orbitron"
-                                        >
-                                            LOG SESSION
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Sociology Stopwatch */}
-                                <div className="system-card p-4 rounded-xl flex items-center justify-between border-purple-500/40">
-                                    <div>
-                                        <div className="font-orbitron font-bold text-sm text-purple-400">SOCIOLOGY A-LEVEL</div>
-                                        <div className="font-orbitron text-2xl font-black text-white my-1">{formatTime(socTime)}</div>
-                                        <div className="text-[10px] text-gray-400">Essay Prep / Key Theories</div>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <button 
-                                            onClick={() => setSocRunning(!socRunning)} 
-                                            className={`px-4 py-2 rounded-lg font-orbitron text-xs font-bold ${socRunning ? 'bg-red-600 text-white' : 'bg-purple-600 text-white shadow-md'}`}
-                                        >
-                                            {socRunning ? 'STOP' : 'START'}
-                                        </button>
-                                        <button 
-                                            onClick={() => { setSocRunning(false); if(socTime > 60) addXp(Math.floor(socTime/10), 10); setSocTime(0); }} 
-                                            className="px-4 py-1 rounded bg-gray-800 text-gray-300 text-[10px] font-orbitron"
-                                        >
-                                            LOG SESSION
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* TAB 3: STATS & RADAR CHART */}
-                    {activeTab === "stats" && (
-                        <div className="space-y-4">
-                            {/* Attribute Radar Chart Display */}
-                            <div className="system-card p-4 rounded-xl text-center glow-cyan">
-                                <div className="font-orbitron text-xs text-purple-400 font-bold mb-2">HUNTER ATTRIBUTE MATRIX</div>
-                                
-                                <div className="w-52 h-52 mx-auto relative flex items-center justify-center my-2">
-                                    <svg viewBox="0 0 200 200" className="w-full h-full">
-                                        {/* Concentric Polygons */}
-                                        {[0.25, 0.5, 0.75, 1].map((scale, idx) => (
-                                            <polygon key={idx} points={getRadarCoordinates({ str: 30*scale, agi: 30*scale, int: 30*scale, vit: 30*scale, dis: 30*scale })} className="radar-grid" />
                                         ))}
-                                        {/* Dynamic Stats Polygon */}
-                                        <polygon points={getRadarCoordinates(stats)} className="radar-poly" />
-                                    </svg>
+                                    </div>
+
+                                    <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
+                                        <button 
+                                            onClick={triggerPenalty}
+                                            class="text-xs text-red-400 hover:text-red-300 font-mono underline"
+                                        >
+                                            [TRIGGER SYSTEM SLACK PENALTY]
+                                        </button>
+                                        <span class="text-xs text-slate-500">RESUMES AT MIDNIGHT</span>
+                                    </div>
                                 </div>
 
-                                <div className="flex justify-between text-[10px] font-orbitron text-purple-300 px-4 mt-1">
-                                    <span>STR: {stats.str}</span>
-                                    <span>AGI: {stats.agi}</span>
-                                    <span>INT: {stats.int}</span>
-                                    <span>VIT: {stats.vit}</span>
-                                    <span>DIS: {stats.dis}</span>
+                                {/* QUICK STATS SNAPSHOT */}
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                    <div class="bg-slate-950/80 p-4 rounded-xl panel-border text-center">
+                                        <div class="text-xs text-slate-400 mb-1">STREAK SCORE</div>
+                                        <div class="text-2xl font-bold font-orbitron text-cyan-400">{player.streak} DAYS</div>
+                                    </div>
+                                    <div class="bg-slate-950/80 p-4 rounded-xl panel-border text-center">
+                                        <div class="text-xs text-slate-400 mb-1">HEIGHT CEILING</div>
+                                        <div class="text-2xl font-bold font-orbitron text-blue-400">5'10"+</div>
+                                    </div>
+                                    <div class="bg-slate-950/80 p-4 rounded-xl panel-border text-center">
+                                        <div class="text-xs text-slate-400 mb-1">BODYWEIGHT</div>
+                                        <div class="text-2xl font-bold font-orbitron text-emerald-400">{player.weight} KG</div>
+                                    </div>
+                                    <div class="bg-slate-950/80 p-4 rounded-xl panel-border text-center">
+                                        <div class="text-xs text-slate-400 mb-1">UNASSIGNED</div>
+                                        <div class="text-2xl font-bold font-orbitron text-yellow-400">{player.unassignedStats} PTS</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Stat Allocation Controls */}
-                            <div className="system-card p-4 rounded-xl space-y-2">
-                                <div className="flex justify-between items-center text-xs mb-2">
-                                    <span className="font-orbitron font-bold text-gray-400">AVAILABLE STAT POINTS:</span>
-                                    <span className="font-orbitron font-black text-yellow-400 text-base">{statPoints} PTS</span>
-                                </div>
+                            {/* RIGHT COL: SHADOW RIVAL CARD SNAPSHOT */}
+                            <div class="space-y-6">
+                                <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                                    <OrnateCorners color="#3b82f6" />
+                                    <div class="flex items-center space-x-2 mb-3">
+                                        <i class="fa-solid fa-ghost text-blue-400"></i>
+                                        <h3 class="text-md font-bold font-orbitron text-blue-400">SHADOW RIVAL (GHOST)</h3>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mb-4">
+                                        An idealized mirror of you. He never slacks off or misses study blocks.
+                                    </p>
 
-                                {Object.entries(stats).map(([key, val]) => (
-                                    <div key={key} className="flex justify-between items-center bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
-                                        <span className="uppercase text-xs font-orbitron font-bold text-cyan-400">{key}</span>
-                                        <div className="flex items-center space-x-3">
-                                            <span className="font-bold text-sm text-white">{val}</span>
-                                            {statPoints > 0 && (
-                                                <button 
-                                                    onClick={() => { setStatPoints(p => p - 1); setStats({...stats, [key]: val + 1}); }}
-                                                    className="bg-cyan-600 hover:bg-cyan-500 text-white w-6 h-6 rounded flex items-center justify-center font-bold text-xs"
-                                                >
-                                                    +
-                                                </button>
-                                            )}
+                                    <div class="space-y-3 text-sm border-t border-slate-800/80 pt-3">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400">Rival Level:</span>
+                                            <span class="font-bold text-blue-300 font-orbitron">LVL {ghost.level}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400">Study Hours Logged:</span>
+                                            <span class="font-bold text-cyan-300 font-orbitron">{ghost.studyHoursLogged} hrs</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400">Tasks Cleared:</span>
+                                            <span class="font-bold text-emerald-400 font-orbitron">{ghost.tasksDone}</span>
                                         </div>
                                     </div>
-                                ))}
+
+                                    <div class="mt-4 p-3 bg-blue-950/30 border border-blue-800/40 rounded text-xs text-blue-200">
+                                        {ghost.level > player.level 
+                                            ? `⚠️ Ghost Player is ${ghost.level - player.level} level(s) ahead! Increase study stopwatch time!`
+                                            : `🔥 You are currently matching the Ghost Player's pace. Don't slow down!`}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
 
-                    {/* TAB 4: FITNESS & MAXIMUM POTENTIAL ENGINE */}
-                    {activeTab === "fitness" && (
-                        <div className="space-y-4">
-                            {/* Physique & Potential Card */}
-                            <div className="system-card p-4 rounded-xl glow-cyan">
-                                <div className="font-orbitron text-xs font-bold text-cyan-400 mb-2">PHYSICAL MATRIX & POTENTIAL</div>
-                                <div className="grid grid-cols-2 gap-2 text-xs font-orbitron mb-4">
-                                    <div className="bg-gray-900/60 p-2 rounded border border-gray-800">HEIGHT: <span className="text-white font-bold">5'8.5"</span></div>
-                                    <div className="bg-gray-900/60 p-2 rounded border border-gray-800">WEIGHT: <span className="text-white font-bold">58.5 KG</span></div>
-                                    <div className="bg-gray-900/60 p-2 rounded border border-gray-800">SPLIT: <span className="text-cyan-400 font-bold">PPL + REHAB</span></div>
-                                    <div className="bg-gray-900/60 p-2 rounded border border-gray-800">TARGET: <span className="text-green-400 font-bold">72.0 KG</span></div>
+                    {/* TAB 2: STUDY STOPWATCHES */}
+                    {activeTab === 'study' && (
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* ECONOMICS STOPWATCH */}
+                            <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border text-center">
+                                <OrnateCorners color="#06b6d4" />
+                                <div class="flex items-center justify-center space-x-2 mb-2">
+                                    <i class="fa-solid fa-chart-line text-cyan-400"></i>
+                                    <h3 class="text-lg font-bold font-orbitron text-cyan-400">ECONOMICS REVISION STOPWATCH</h3>
+                                </div>
+                                <p class="text-xs text-slate-400 mb-6">Earn INT Stats, XP, and Gold for every minute focused.</p>
+                                
+                                <div class="text-5xl font-black font-orbitron text-cyan-400 cyan-glow mb-8 tracking-widest">
+                                    {formatTime(ecoTime)}
                                 </div>
 
-                                <div className="border-t border-gray-800 pt-3 space-y-2">
-                                    <div className="flex justify-between text-xs font-orbitron">
-                                        <span className="text-gray-400">MAXIMUM PHYSIQUE POTENTIAL GAP:</span>
-                                        <span className="text-red-400 font-bold">13.5 KG REMAINING</span>
-                                    </div>
-                                    <div className="w-full bg-gray-900 h-2.5 rounded-full overflow-hidden border border-red-900/60">
-                                        <div className="bg-gradient-to-r from-red-600 to-yellow-500 h-full" style={{ width: '42%' }}></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* BRUTAL SYSTEM FEEDBACK ENGINE */}
-                            <div className="system-card-red p-4 rounded-xl glow-red">
-                                <div className="font-orbitron font-bold text-xs text-red-400 mb-1">⚠️ BRUTAL SYSTEM EVALUATION</div>
-                                <p className="text-xs text-gray-300 leading-relaxed font-semibold">
-                                    {completionRate < 50 
-                                        ? "CRITICAL WARNING: You are acting weak and undisciplined. Missing your directives means you remain an E-Rank weakling. Double your effort or accept mediocrity."
-                                        : "EXECUTION ACCEPTABLE: Keep pushing. The distance between your current state and your ceiling requires relentless daily discipline."}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* DAILY DIRECTIVES & CUSTOM QUEST CREATOR (ALWAYS AVAILABLE AT BOTTOM) */}
-                    <div className="mt-6 space-y-4">
-                        <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <h2 className="font-orbitron font-bold text-xs text-cyan-400">DAILY DIRECTIVES</h2>
-                            <span className="text-[10px] text-red-400 font-orbitron animate-pulse">RESET: 23:59</span>
-                        </div>
-
-                        {/* Directives List */}
-                        <div className="space-y-2">
-                            {dailyDirectives.map(d => (
-                                <div key={d.id} onClick={() => toggleDirective(d.id)} className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${d.completed ? 'bg-gray-900/40 border-gray-800 opacity-50' : 'system-card hover:border-cyan-500'}`}>
-                                    <div className="flex items-center space-x-3">
-                                        <div className={`w-5 h-5 rounded flex items-center justify-center border font-bold text-xs ${d.completed ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-gray-600 bg-gray-900 text-transparent'}`}>✓</div>
-                                        <div>
-                                            <p className={`text-xs font-bold ${d.completed ? 'line-through text-gray-500' : 'text-gray-200'}`}>{d.title}</p>
-                                            <span className="text-[9px] text-cyan-400 font-orbitron">+{d.xp} XP / +{d.gold} GOLD</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Custom Timed Quests */}
-                        <div className="pt-2">
-                            <h2 className="font-orbitron font-bold text-xs text-cyan-400 mb-2">CUSTOM TIMED QUESTS</h2>
-                            
-                            <form onSubmit={addCustomQuest} className="space-y-2 mb-3">
-                                <input 
-                                    type="text" 
-                                    placeholder="Quest title (e.g., UCAS Statement Draft)..." 
-                                    value={newQuestTitle}
-                                    onChange={(e) => setNewQuestTitle(e.target.value)}
-                                    className="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-cyan-500 font-sans"
-                                />
-                                <div className="flex gap-2">
-                                    <input 
-                                        type="datetime-local" 
-                                        value={newQuestDeadline}
-                                        onChange={(e) => setNewQuestDeadline(e.target.value)}
-                                        className="flex-1 bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-gray-400 focus:outline-none focus:border-cyan-500"
-                                    />
-                                    <button type="submit" className="bg-cyan-600 hover:bg-cyan-500 text-white font-orbitron font-bold text-xs px-4 rounded-lg shadow-md glow-cyan">
-                                        ASSIGN
+                                <div class="flex justify-center space-x-4">
+                                    <button
+                                        onClick={() => setEcoRunning(!ecoRunning)}
+                                        class={`px-6 py-3 rounded-lg font-bold font-orbitron text-sm transition-all ${
+                                            ecoRunning ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                                        }`}
+                                    >
+                                        {ecoRunning ? 'PAUSE TIMER' : 'START REVISION'}
+                                    </button>
+                                    <button
+                                        onClick={() => claimStopwatchEarnings('eco')}
+                                        class="px-6 py-3 rounded-lg font-bold font-orbitron text-sm bg-slate-800 hover:bg-slate-700 text-yellow-400 border border-yellow-500/40"
+                                    >
+                                        CLAIM GOLD & XP
                                     </button>
                                 </div>
-                            </form>
+                            </div>
 
-                            <div className="space-y-2">
-                                {customQuests.map(q => (
-                                    <div key={q.id} onClick={() => toggleCustomQuest(q.id)} className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${q.completed ? 'bg-gray-900/40 border-gray-800 opacity-50' : 'system-card border-yellow-500/40'}`}>
-                                        <div className="flex items-center space-x-3">
-                                            <div className={`w-5 h-5 rounded flex items-center justify-center border font-bold text-xs ${q.completed ? 'bg-yellow-600 border-yellow-400 text-white' : 'border-gray-600 bg-gray-900 text-transparent'}`}>✓</div>
+                            {/* SOCIOLOGY STOPWATCH */}
+                            <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border text-center">
+                                <OrnateCorners color="#3b82f6" />
+                                <div class="flex items-center justify-center space-x-2 mb-2">
+                                    <i class="fa-solid fa-users text-blue-400"></i>
+                                    <h3 class="text-lg font-bold font-orbitron text-blue-400">SOCIOLOGY REVISION STOPWATCH</h3>
+                                </div>
+                                <p class="text-xs text-slate-400 mb-6">Active recall timer for essays & theoretical models.</p>
+                                
+                                <div class="text-5xl font-black font-orbitron text-blue-400 cyan-glow mb-8 tracking-widest">
+                                    {formatTime(socTime)}
+                                </div>
+
+                                <div class="flex justify-center space-x-4">
+                                    <button
+                                        onClick={() => setSocRunning(!socRunning)}
+                                        class={`px-6 py-3 rounded-lg font-bold font-orbitron text-sm transition-all ${
+                                            socRunning ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white'
+                                        }`}
+                                    >
+                                        {socRunning ? 'PAUSE TIMER' : 'START REVISION'}
+                                    </button>
+                                    <button
+                                        onClick={() => claimStopwatchEarnings('soc')}
+                                        class="px-6 py-3 rounded-lg font-bold font-orbitron text-sm bg-slate-800 hover:bg-slate-700 text-yellow-400 border border-yellow-500/40"
+                                    >
+                                        CLAIM GOLD & XP
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 3: ATTRIBUTES & RIVAL */}
+                    {activeTab === 'stats' && (
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* USER STATS MATRIX */}
+                            <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                                <OrnateCorners color="#06b6d4" />
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-bold font-orbitron text-cyan-400">HUNTER ATTRIBUTES</h3>
+                                    <span class="text-xs text-yellow-400 font-orbitron">UNASSIGNED: {player.unassignedStats} PTS</span>
+                                </div>
+
+                                <div class="space-y-4">
+                                    {[
+                                        { key: 'STR', label: 'STR (Strength)', desc: 'PPL Gym progression & raw physical power' },
+                                        { key: 'AGI', label: 'AGI (Agility)', desc: 'Execution speed & daily task responsiveness' },
+                                        { key: 'INT', label: 'INT (Intelligence)', desc: 'Economics & Sociology cognitive recall' },
+                                        { key: 'VIT', label: 'VIT (Vitality)', desc: 'Recovery, posture & hanging protocol' },
+                                        { key: 'DIS', label: 'DIS (Discipline)', desc: 'Mental resilience & zero-slacking streak' },
+                                    ].map(stat => (
+                                        <div key={stat.key} class="flex items-center justify-between p-3 bg-slate-900/80 rounded-lg border border-slate-800">
                                             <div>
-                                                <p className={`text-xs font-bold ${q.completed ? 'line-through text-gray-500' : 'text-gray-200'}`}>{q.title}</p>
-                                                <span className="text-[9px] text-yellow-400 font-orbitron">DEADLINE: {q.deadline.replace('T', ' ')}</span>
+                                                <div class="font-bold text-sm text-slate-200">{stat.label}</div>
+                                                <div class="text-xs text-slate-400">{stat.desc}</div>
+                                            </div>
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg font-bold font-orbitron text-cyan-300">{player.stats[stat.key]}</span>
+                                                {player.unassignedStats > 0 && (
+                                                    <button
+                                                        onClick={() => allocateStat(stat.key)}
+                                                        class="w-7 h-7 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs"
+                                                    >
+                                                        +
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* SHADOW RIVAL COMPARISON */}
+                            <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                                <OrnateCorners color="#3b82f6" />
+                                <h3 class="text-lg font-bold font-orbitron text-blue-400 mb-4">RIVAL STAT COMPARISON</h3>
+                                <div class="space-y-4 text-sm">
+                                    {Object.keys(player.stats).map(key => {
+                                        const userVal = player.stats[key];
+                                        const ghostVal = ghost.stats[key];
+                                        return (
+                                            <div key={key} class="space-y-1">
+                                                <div class="flex justify-between text-xs font-orbitron">
+                                                    <span class="text-slate-400">{key} GAP</span>
+                                                    <span class="text-slate-300">YOU: {userVal} | GHOST: {ghostVal}</span>
+                                                </div>
+                                                <div class="w-full h-2 bg-slate-900 rounded-full flex overflow-hidden">
+                                                    <div class="h-full bg-cyan-500" style={{ width: `${Math.min((userVal / 10) * 100, 100)}%` }}></div>
+                                                    <div class="h-full bg-blue-600 opacity-60" style={{ width: `${Math.min((ghostVal / 10) * 100, 100)}%` }}></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 4: FITNESS & HEIGHT MATRIX */}
+                    {activeTab === 'fitness' && (
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* HEIGHT & POSTURE POTENTIAL */}
+                            <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                                <OrnateCorners color="#06b6d4" />
+                                <div class="flex items-center space-x-2 mb-4">
+                                    <i class="fa-solid fa-ruler-vertical text-cyan-400"></i>
+                                    <h3 class="text-lg font-bold font-orbitron text-cyan-400">SPINAL & HEIGHT POTENTIAL</h3>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="bg-slate-900/80 p-4 rounded-lg border border-slate-800">
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="text-slate-400">Baseline Measured Height:</span>
+                                            <span class="font-bold text-slate-200">5'8.5"</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-400">Spinal Decompression Ceiling:</span>
+                                            <span class="font-bold text-cyan-300 font-orbitron">5'10" - 5'11"</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-4 bg-cyan-950/20 border border-cyan-800/40 rounded-lg text-xs text-cyan-200 space-y-2">
+                                        <div class="font-bold font-orbitron text-cyan-300">DAILY POSTURAL PROTOCOL:</div>
+                                        <ul class="list-disc list-inside space-y-1 text-slate-300">
+                                            <li>15-min Dead Hang (Decompress intervertebral discs)</li>
+                                            <li>Core Anti-Slouch Alignment (Chest up, shoulders back)</li>
+                                            <li>Anterior Pelvic Tilt Correction Exercises</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* BODYWEIGHT & PPL PROGRESSION */}
+                            <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                                <OrnateCorners color="#10b981" />
+                                <div class="flex items-center space-x-2 mb-4">
+                                    <i class="fa-solid fa-weight-scale text-emerald-400"></i>
+                                    <h3 class="text-lg font-bold font-orbitron text-emerald-400">PHYSIQUE & MASS TARGET</h3>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="bg-slate-900/80 p-4 rounded-lg border border-slate-800">
+                                        <div class="flex justify-between text-sm mb-2">
+                                            <span class="text-slate-400">Current Weight:</span>
+                                            <span class="font-bold text-emerald-300 font-orbitron">{player.weight} KG</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm mb-2">
+                                            <span class="text-slate-400">Muscle Target Ceiling:</span>
+                                            <span class="font-bold text-slate-200 font-orbitron">72.0 KG</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                                            <div class="h-full bg-emerald-500" style={{ width: `${(player.weight / 72) * 100}%` }}></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-4 bg-slate-900/80 rounded-lg border border-slate-800 space-y-2">
+                                        <div class="text-xs text-slate-400">DAILY PROTEIN TARGET (120G)</div>
+                                        <div class="text-lg font-bold font-orbitron text-emerald-400">
+                                            {player.proteinLogged}g / 120g
+                                        </div>
+                                        <button 
+                                            onClick={() => setPlayer(prev => ({ ...prev, proteinLogged: Math.min(prev.proteinLogged + 30, 120) }))}
+                                            class="w-full bg-emerald-950 hover:bg-emerald-900 border border-emerald-600 text-emerald-300 py-1.5 rounded text-xs font-bold"
+                                        >
+                                            + LOG 30G PROTEIN SHAKE
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 5: CALENDAR & DEADLINES */}
+                    {activeTab === 'calendar' && (
+                        <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                            <OrnateCorners color="#06b6d4" />
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold font-orbitron text-cyan-400">ACADEMIC & EXAM CALENDAR</h3>
+                                <span class="text-xs text-slate-400 font-mono">OCTOBER - NOVEMBER 2026</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* UPCOMING DEADLINES LIST */}
+                                <div class="space-y-3">
+                                    <div class="text-sm font-bold font-orbitron text-slate-300 mb-2">SCHEDULED EXAMS & ASSIGNMENTS</div>
+                                    {deadlines.map(d => (
+                                        <div key={d.id} class="p-4 bg-slate-900/80 border border-slate-800 rounded-lg flex justify-between items-center">
+                                            <div>
+                                                <div class="font-bold text-sm text-cyan-300">{d.title}</div>
+                                                <div class="text-xs text-slate-400">Deadline: {d.date}</div>
+                                            </div>
+                                            <span class="px-2 py-1 text-xs font-bold bg-cyan-950 text-cyan-400 border border-cyan-800 rounded">
+                                                {d.type}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* ADD NEW DEADLINE FORM */}
+                                <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800 space-y-3">
+                                    <div class="text-sm font-bold font-orbitron text-slate-300">REGISTER NEW SYSTEM DEADLINE</div>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Exam or Subject Title..."
+                                        id="newDeadlineTitle"
+                                        class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500"
+                                    />
+                                    <input 
+                                        type="date" 
+                                        id="newDeadlineDate"
+                                        class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500"
+                                    />
+                                    <button 
+                                        onClick={() => {
+                                            const title = document.getElementById('newDeadlineTitle').value;
+                                            const date = document.getElementById('newDeadlineDate').value;
+                                            if (title && date) {
+                                                setDeadlines(prev => [...prev, { id: Date.now(), title, date, type: 'Target' }]);
+                                                document.getElementById('newDeadlineTitle').value = '';
+                                            }
+                                        }}
+                                        class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 rounded text-xs font-orbitron"
+                                    >
+                                        ADD SYSTEM DEADLINE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 6: SYSTEM SHOP */}
+                    {activeTab === 'shop' && (
+                        <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                            <OrnateCorners color="#eab308" />
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-store text-yellow-400 gold-glow"></i>
+                                    <h3 class="text-lg font-bold font-orbitron text-yellow-400 gold-glow">REAL-WORLD REWARD SHOP</h3>
+                                </div>
+                                <div class="text-sm font-orbitron text-yellow-400">BALANCE: {player.gold} GOLD</div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {shopItems.map(item => (
+                                    <div key={item.id} class="p-4 bg-slate-900/80 border border-slate-800 rounded-lg flex justify-between items-center">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 rounded-lg bg-yellow-950/40 border border-yellow-600/40 flex items-center justify-center text-yellow-400">
+                                                <i class={`fa-solid ${item.icon}`}></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-bold text-sm text-slate-200">{item.name}</div>
+                                                <div class="text-xs text-slate-400">{item.desc}</div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handlePurchase(item)}
+                                            class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-slate-950 font-bold rounded text-xs font-orbitron transition-all"
+                                        >
+                                            {item.cost} GOLD
+                                        </button>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    )}
 
+                    {/* TAB 7: AI EVALUATOR TERMINAL */}
+                    {activeTab === 'ai' && (
+                        <div class="relative bg-slate-950/90 p-6 rounded-xl panel-border">
+                            <OrnateCorners color="#06b6d4" />
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fa-solid fa-brain text-cyan-400"></i>
+                                <h3 class="text-lg font-bold font-orbitron text-cyan-400">SYSTEM AI MERIT EVALUATOR</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-6">Ask the System if you have earned permission for leisure activities based on your live revision hours and stats.</p>
+
+                            <div class="space-y-4">
+                                <div class="flex space-x-2">
+                                    <input 
+                                        type="text"
+                                        value={aiQuery}
+                                        onChange={(e) => setAiQuery(e.target.value)}
+                                        placeholder="e.g. Can I play 2 hours of FIFA tonight?"
+                                        class="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500"
+                                    />
+                                    <button 
+                                        onClick={handleAiEvaluation}
+                                        disabled={aiLoading}
+                                        class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-6 py-3 rounded-lg text-sm font-orbitron transition-all"
+                                    >
+                                        {aiLoading ? 'EVALUATING...' : 'REQUEST PERMISSION'}
+                                    </button>
+                                </div>
+
+                                {aiResponse && (
+                                    <div class={`p-5 rounded-lg border ${
+                                        aiResponse.approved ? 'bg-emerald-950/30 border-emerald-500 text-emerald-200' : 'bg-red-950/30 border-red-500 text-red-200'
+                                    }`}>
+                                        <div class="font-bold font-orbitron text-md mb-2">
+                                            {aiResponse.approved ? '[AUTHORIZATION APPROVED]' : '[AUTHORIZATION DENIED]'}
+                                        </div>
+                                        <p class="text-sm leading-relaxed">{aiResponse.verdict}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
